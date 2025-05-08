@@ -1,0 +1,24 @@
+﻿@{
+    ViewData["Title"] = "Hastalarım";
+    Layout = "~/Views/Shared/_DoctorLayout.cshtml";
+    var patients = ViewBag.Patients as List<string>;
+}
+
+<h2 class="mb-4">Hastalarım</h2>
+
+@if (patients != null && patients.Any())
+{
+    <ul class="list-group">
+        @foreach (var patient in patients)
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                @patient
+                <span class="badge bg-primary rounded-pill">Detay</span>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <div class="alert alert-info">Kayıtlı hasta bulunmamaktadır.</div>
+}

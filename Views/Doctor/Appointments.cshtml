@@ -1,0 +1,58 @@
+﻿@{
+    ViewData["Title"] = "Randevular";
+    Layout = "~/Views/Shared/_DoctorLayout.cshtml";
+    var appointments = ViewBag.Appointments as List<dynamic>;
+}
+
+<h2 class="mb-4">Randevular</h2>
+
+@if (appointments != null && appointments.Any())
+{
+    <table class="table table-bordered table-hover table-sm bg-white">
+        <thead class="table-light">
+            <tr>
+                <th>Hasta</th>
+                <th>Tarih</th>
+                <th>Saat</th>
+                <th>Durum</th>
+                <th>İşlemler</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in appointments)
+            {
+                <tr>
+                    <td>@item.Patient</td>
+                    <td>@item.Date</td>
+                    <td>@item.Time</td>
+                    <td>
+                        @if (item.Status == "Onaylı")
+                        {
+                            <span class="badge bg-success">Onaylı</span>
+                        }
+                        else if (item.Status == "Bekliyor")
+                        {
+                            <span class="badge bg-warning text-dark">Bekliyor</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">İptal</span>
+                        }
+                    </td>
+                    <td class="text-end">
+                        <a href="#" class="btn btn-sm btn-outline-primary me-2">
+                            <i class="fas fa-edit"></i> Düzenle
+                        </a>
+                        <a href="#" class="btn btn-sm btn-outline-danger">
+                            <i class="fas fa-trash-alt"></i> Sil
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-info">Henüz bir randevu kaydı yok.</div>
+}
