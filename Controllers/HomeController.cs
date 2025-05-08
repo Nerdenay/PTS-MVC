@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using PatientTrackingSite.Models;
 using System.Diagnostics;
 
@@ -19,6 +19,11 @@ namespace PatientTrackingSite.Controllers
         }
 
         public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        public IActionResult Doctor()
         {
             return View();
         }
