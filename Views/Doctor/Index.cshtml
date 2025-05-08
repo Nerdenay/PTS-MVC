@@ -1,0 +1,35 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/Shared/_DoctorLayout.cshtml";
+}
+
+<h2 class="mb-4">Hoş geldiniz, Doktor!</h2>
+
+<div class="row">
+    <div class="col-md-4 mb-3">
+        <div class="card text-bg-primary shadow">
+            <div class="card-body">
+                <h5 class="card-title">Bugünkü Randevular</h5>
+                <p class="card-text fs-3">@ViewBag.TodayAppointments</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-3">
+        <div class="card text-bg-success shadow">
+            <div class="card-body">
+                <h5 class="card-title">Toplam Hastalar</h5>
+                <p class="card-text fs-3">@ViewBag.TotalPatients</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-3">
+        <div class="card text-bg-warning shadow">
+            <div class="card-body">
+                <h5 class="card-title">Yeni Tahliller</h5>
+                <p class="card-text fs-3">@ViewBag.NewLabResults</p>
+            </div>
+        </div>
+    </div>
+</div>
