@@ -3,3 +3,242 @@
 *@
 @{
 }
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - Doctor Panel | Patient Tracking Site</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            display: flex;
+            height: 100%
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #152642;
+            color: white;
+            min-height: 100vh;
+            padding: 1.5rem 1rem;
+            position: fixed;
+            border-right: 4px solid black;
+            transition: all 0.3s ease;
+        }
+
+            .sidebar a {
+                color: white;
+                display: block;
+                padding: 10px 15px;
+                margin: 8px 0;
+                border-radius: 8px;
+                text-decoration: none;
+            }
+
+                .sidebar a:hover {
+                    background-color: #1e3a60;
+                }
+
+        .logo-container {
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .logo-img {
+            max-width: 140px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background-color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .search-box input {
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            background-color: #e9ecef;
+        }
+
+        .sidebar.collapsed {
+            width: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .main-content.collapsed {
+            margin-left: 0;
+            width: 100%;
+        }
+
+        .container-fluid {
+            flex: 1; /* İçeriğin kalan alanı kaplamasını sağlar */
+        }
+
+        .dark-mode footer {
+            background-color: #1c1c1c !important;
+            color: #ffffff;
+            border-top: 1px solid #444;
+        }
+
+            .dark-mode footer .text-muted {
+                color: #cccccc !important;
+            }
+
+
+        .dark-mode {
+            background-color: #121212;
+            color: #ffffff;
+        }
+
+            .dark-mode .card {
+                background-color: #1e1e1e;
+                color: #fff;
+                border: 1px solid #333;
+            }
+
+            .dark-mode .navbar {
+                background-color: #1c1c1c;
+                border-bottom: 1px solid #444;
+            }
+
+            .dark-mode .sidebar {
+                background-color: #101d30;
+            }
+
+        .toggle-btn {
+            background-color: #1e3a60;
+            color: white;
+            border: solid;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+
+            .toggle-btn:hover {
+                background-color: #2d4e7c;
+            }
+
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo-container">
+            <img src="~/images/Logo.png" class="logo-img" />
+        </div>
+
+        <!-- Doktor Menüsü -->
+        <a href="/Doctor/Index"><i class="fas fa-home me-2"></i> Ana Sayfa</a>
+        <a href="/Doctor/MyPatients"><i class="fas fa-users me-2"></i> Hastalarım</a>
+        <a href="/Doctor/Appointments"><i class="fas fa-calendar-check me-2"></i> Randevular</a>
+        <a href="#"><i class="fas fa-vials me-2"></i> Tahlil Sonuçları</a>
+        <a href="#"><i class="fas fa-stethoscope me-2"></i> Muayene Notları</a>
+        <a href="#"><i class="fas fa-prescription me-2"></i> Reçete Yaz</a>
+        <a href="#"><i class="fas fa-notes-medical me-2"></i> Tanılar</a>
+        <a href="#"><i class="fas fa-file-medical me-2"></i> Raporlar</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="navbar">
+            <button class="btn btn-outline-primary toggle-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="search-box">
+                <input type="text" placeholder="Hangi hastayı arıyorsunuz?" />
+            </div>
+
+            <div class="d-flex align-items-center gap-2">
+                <!-- Bildirimler -->
+                <div class="dropdown">
+                    <button class="btn btn-light dropdown-toggle" type="button" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Bildirimler">
+                        <i class="fas fa-bell"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown">
+                        <li><a class="dropdown-item" href="#">Yeni randevu eklendi</a></li>
+                        <li><a class="dropdown-item" href="#">Tahlil sonucu güncellendi</a></li>
+                    </ul>
+                </div>
+
+                <!-- Profil -->
+                <div class="dropdown">
+                    <button class="btn btn-light dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Profil">
+                        <i class="fas fa-user-circle"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                        <li><a class="dropdown-item" href="/Account/Profile">Profilim</a></li>
+                        <li><a class="dropdown-item" href="/Account/Logout">Çıkış Yap</a></li>
+                    </ul>
+                </div>
+
+                <!-- Gece Modu -->
+                <button id="darkModeToggle" class="btn btn-light" title="Gece Modu">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+        <div class="container-fluid p-4">
+            @RenderBody()
+        </div>
+
+        <footer class="text-center py-3 bg-light border-top" style="font-size: 0.9rem;">
+            <div class="container">
+                <span class="text-muted">
+                    © 2025 Patient Tracking Site | Doktor Paneli | Tüm hakları saklıdır.
+                </span>
+            </div>
+        </footer>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.querySelector('.toggle-btn').addEventListener('click', function () {
+            document.querySelector('.sidebar').classList.toggle('collapsed');
+            document.querySelector('.main-content').classList.toggle('collapsed');
+        });
+    </script>
+
+    <script>
+        const toggle = document.getElementById('darkModeToggle');
+
+        toggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+
+            // İkonu güncelle
+            if (document.body.classList.contains('dark-mode')) {
+                toggle.innerHTML = '<i class="fas fa-sun"></i>';
+                toggle.title = "Gündüz Modu";
+            } else {
+                toggle.innerHTML = '<i class="fas fa-moon"></i>';
+                toggle.title = "Gece Modu";
+            }
+        });
+    </script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
