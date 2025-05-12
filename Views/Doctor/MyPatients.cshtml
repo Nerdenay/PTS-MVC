@@ -1,19 +1,23 @@
-﻿@{
+﻿@model List<PatientTrackingSite.ViewModels.PatientListItemViewModel>
+
+@{
     ViewData["Title"] = "Hastalarım";
     Layout = "~/Views/Shared/_DoctorLayout.cshtml";
-    var patients = ViewBag.Patients as List<string>;
 }
 
 <h2 class="mb-4">Hastalarım</h2>
 
-@if (patients != null && patients.Any())
+@if (Model != null && Model.Any())
 {
     <ul class="list-group">
-        @foreach (var patient in patients)
+        @foreach (var patient in Model)
         {
             <li class="list-group-item d-flex justify-content-between align-items-center">
-                @patient
-                <span class="badge bg-primary rounded-pill">Detay</span>
+                @($"{patient.FirstName} {patient.LastName}")
+                <a href="/Doctor/PatientDetails/@patient.PatientId" class="btn btn-outline-info btn-sm">
+                    <i class="fas fa-info-circle me-1"></i> Detay
+                </a>
+
             </li>
         }
     </ul>

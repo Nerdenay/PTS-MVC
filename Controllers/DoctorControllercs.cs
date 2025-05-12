@@ -1,46 +1,242 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using PatientTrackingSite.Models;
+using PatientTrackingSite.ViewModels;
+
 
 namespace PatientTrackingSite.Controllers
 {
     public class DoctorController : Controller
     {
+        private readonly PTSDBContext _context;
+
+        public DoctorController(PTSDBContext context)
+        {
+            _context = context;
+        }
+
         public IActionResult Index()
         {
-            // Örnek veriler - ileride DB'den çekilecek
-            ViewBag.TodayAppointments = 7;
-            ViewBag.TotalPatients = 124;
-            ViewBag.NewLabResults = 3;
+            int doctorId = 1; // Geçici sabit doktor
+
+            var today = DateTime.Today;
+
+            ViewBag.TodayAppointments = _context.Appointments
+                .Where(a => a.DoctorId == doctorId && a.AppointmentDate.Date == today)
+                .Count();
+
+            ViewBag.TotalPatients = _context.Appointments
+                .Where(a => a.DoctorId == doctorId)
+                .Select(a => a.PatientId)
+                .Distinct()
+                .Count();
 
             return View();
         }
 
         public IActionResult MyPatients()
         {
-            // Geçici dummy veriler (ileride DB'den gelecek)
-            var patients = new List<string>
+            int doctorId = 1; // Giriş yapan doktor ID’si (şimdilik sabit)
+
+            var patients = _context.Appointments
+                .Include(a => a.Patient)
+                .Where(a => a.DoctorId == doctorId)
+                .GroupBy(a => a.PatientId)
+                .Select(g => new PatientListItemViewModel
+                {
+                    PatientId = g.Key,
+                    FirstName = g.First().Patient.FirstName,
+                    LastName = g.First().Patient.LastName,
+                    AppointmentCount = g.Count()
+                })
+                .ToList();
+
+            return View(patients);
+        }
+
+        public IActionResult PatientDetails(int id)
+        {
+            var patient = _context.Users.FirstOrDefault(u => u.Id == id && u.Role == "Patient");
+            if (patient == null) return NotFound();
+
+            var medications = _context.Medications
+                .Where(m => m.PatientId == id)
+                .OrderByDescending(m => m.Id)
+                .ToList();
+
+            var diseases = _context.Diseases
+                .Where(d => d.PatientId == id)
+                .OrderByDescending(d => d.Id)
+                .ToList();
+
+            var images = _context.MedicalImages
+                .Where(i => i.PatientId == id)
+                .OrderByDescending(i => i.Id)
+                .ToList();
+
+            var appointmentCount = _context.Appointments
+                .Count(a => a.PatientId == id);
+
+            var viewModel = new PatientDetailViewModel
             {
-                "Ahmet Yılmaz",
-                "Elif Kaya",
-                "Mehmet Güneş"
+                Patient = patient,
+                Medications = medications,
+                Diseases = diseases,
+                MedicalImages = images,
+                AppointmentCount = appointmentCount
             };
 
-            ViewBag.Patients = patients;
-
-            return View();
+            return View(viewModel);
         }
 
         public IActionResult Appointments()
         {
-            var appointments = new List<dynamic>
-    {
-        new { Patient = "Ahmet Yılmaz", Date = "08.05.2025", Time = "10:00", Status = "Onaylı" },
-        new { Patient = "Elif Kaya", Date = "08.05.2025", Time = "11:30", Status = "Bekliyor" },
-        new { Patient = "Mehmet Güneş", Date = "08.05.2025", Time = "14:00", Status = "İptal" }
-    };
+            int currentDoctorId = 1; // Geçici sabit ID, login işlemi bağlanınca dinamik olur
 
-            ViewBag.Appointments = appointments;
-            return View();
+            var start = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            var end = start.AddMonths(1);
+
+            var appointments = _context.Appointments
+                .Include(a => a.Patient)
+                .Where(a => a.DoctorId == currentDoctorId && a.AppointmentDate >= start && a.AppointmentDate < end)
+                .OrderBy(a => a.AppointmentDate)
+                .ToList();
+
+            return View(appointments);
         }
+
+        [HttpGet]
+        public IActionResult EditAppointment(int id)
+        {
+            var appointment = _context.Appointments
+                .Include(a => a.Patient)
+                .FirstOrDefault(a => a.Id == id);
+
+            if (appointment == null)
+                return NotFound();
+
+            return View(appointment);
+        }
+
+        [HttpPost]
+        public IActionResult EditAppointment(Appointment updatedAppointment)
+        {
+            var appointment = _context.Appointments.FirstOrDefault(a => a.Id == updatedAppointment.Id);
+            if (appointment == null) return NotFound();
+
+            appointment.AppointmentDate = updatedAppointment.AppointmentDate;
+            appointment.Status = updatedAppointment.Status;
+            appointment.Notes = updatedAppointment.Notes;
+
+            _context.SaveChanges();
+
+            return RedirectToAction("Appointments");
+        }
+
+        
+        [HttpGet]
+        public IActionResult CreatePrescription()
+        {
+            var model = new PrescriptionViewModel
+            {
+                PatientList = _context.Users
+                    .Where(u => u.Role == "Patient")
+                    .Select(p => new SelectListItem
+                    {
+                        Value = p.Id.ToString(),
+                        Text = p.FirstName + " " + p.LastName
+                    })
+                    .ToList()
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult CreatePrescription(PrescriptionViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                model.PatientList = _context.Users
+                    .Where(u => u.Role == "Patient")
+                    .Select(u => new SelectListItem
+                    {
+                        Value = u.Id.ToString(),
+                        Text = u.FirstName + " " + u.LastName
+                    }).ToList();
+
+                return View(model);
+            }
+
+            var medication = new Medication
+            {
+                Name = model.MedicationName,
+                Dosage = model.Dosage,
+                Instructions = model.Instructions,
+                PatientId = model.SelectedPatientId
+            };
+
+            _context.Medications.Add(medication);
+            _context.SaveChanges();
+
+            return RedirectToAction("MyPatients");
+        }
+
+        [HttpGet]
+        public IActionResult EditPrescription(int id)
+        {
+            var medication = _context.Medications.FirstOrDefault(m => m.Id == id);
+            if (medication == null) return NotFound();
+
+            var model = new PrescriptionViewModel
+            {
+                SelectedPatientId = medication.PatientId,
+                MedicationName = medication.Name,
+                Dosage = medication.Dosage,
+                Instructions = medication.Instructions,
+                // Hasta bilgisi değişmeyecek, ama formu doldurmak için lazım:
+                PatientList = _context.Users
+                    .Where(u => u.Role == "Patient")
+                    .Select(u => new SelectListItem
+                    {
+                        Value = u.Id.ToString(),
+                        Text = u.FirstName + " " + u.LastName
+                    }).ToList()
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult EditPrescription(int id, PrescriptionViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                model.PatientList = _context.Users
+                    .Where(u => u.Role == "Patient")
+                    .Select(u => new SelectListItem
+                    {
+                        Value = u.Id.ToString(),
+                        Text = u.FirstName + " " + u.LastName
+                    }).ToList();
+                return View(model);
+            }
+
+            var medication = _context.Medications.FirstOrDefault(m => m.Id == id);
+            if (medication == null) return NotFound();
+
+            medication.Name = model.MedicationName;
+            medication.Dosage = model.Dosage;
+            medication.Instructions = model.Instructions;
+
+            _context.SaveChanges();
+
+            return RedirectToAction("PatientDetails", new { id = medication.PatientId });
+        }
+
+
+
 
     }
 }

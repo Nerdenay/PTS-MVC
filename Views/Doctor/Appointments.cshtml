@@ -1,56 +1,69 @@
-﻿@{
-    ViewData["Title"] = "Randevular";
+﻿@model List<PatientTrackingSite.Models.Appointment>
+
+@{
+    ViewData["Title"] = "Randevu Takvimi";
     Layout = "~/Views/Shared/_DoctorLayout.cshtml";
-    var appointments = ViewBag.Appointments as List<dynamic>;
+    var grouped = Model
+        .OrderBy(a => a.AppointmentDate)
+        .GroupBy(a => a.AppointmentDate.Date);
 }
 
-<h2 class="mb-4">Randevular</h2>
+<h2 class="mb-4">Randevu Takvimi</h2>
 
-@if (appointments != null && appointments.Any())
+@if (Model != null && Model.Any())
 {
-    <table class="table table-bordered table-hover table-sm bg-white">
-        <thead class="table-light">
-            <tr>
-                <th>Hasta</th>
-                <th>Tarih</th>
-                <th>Saat</th>
-                <th>Durum</th>
-                <th>İşlemler</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in appointments)
-            {
-                <tr>
-                    <td>@item.Patient</td>
-                    <td>@item.Date</td>
-                    <td>@item.Time</td>
-                    <td>
-                        @if (item.Status == "Onaylı")
-                        {
-                            <span class="badge bg-success">Onaylı</span>
-                        }
-                        else if (item.Status == "Bekliyor")
-                        {
-                            <span class="badge bg-warning text-dark">Bekliyor</span>
-                        }
-                        else
-                        {
-                            <span class="badge bg-danger">İptal</span>
-                        }
-                    </td>
-                    <td class="text-end">
-                        <a href="#" class="btn btn-sm btn-outline-primary me-2">
-                            <i class="fas fa-edit"></i> Düzenle
-                        </a>
-                        <a href="#" class="btn btn-sm btn-outline-danger">
-                            <i class="fas fa-trash-alt"></i> Sil
-                        </a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    foreach (var day in grouped)
+    {
+        <div class="mb-4">
+            <h5 class="text-primary">@day.Key.ToString("dd MMMM yyyy")</h5>
+
+            <table class="table table-bordered table-sm bg-white">
+                <thead class="table-light">
+                    <tr>
+                        <th>Saat</th>
+                        <th>Hasta</th>
+                        <th>Durum</th>
+                        <th>Notlar</th>
+                        <th class="text-end">İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in day)
+                    {
+                        <tr>
+                            <td>@item.AppointmentDate.ToString("HH:mm")</td>
+                            <td>@item.Patient.FirstName @item.Patient.LastName</td>
+                            <td>
+                                @if (item.Status == "Scheduled")
+                                {
+                                    <span class="badge bg-warning text-dark">Bekliyor</span>
+                                }
+                                else if (item.Status == "Completed")
+                                {
+                                    <span class="badge bg-success">Tamamlandı</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">İptal</span>
+                                }
+                            </td>
+                            <td>@item.Notes</td>
+                            <td class="text-end">
+                                <a href="/Doctor/EditAppointment/@item.Id" class="btn btn-sm btn-outline-primary me-2">
+                                    <i class="fas fa-edit"></i> Güncelle
+                                </a>
+                                <form asp-action="DeleteAppointment" asp-route-id="@item.Id" method="post" class="d-inline" onsubmit="return confirm('Silmek istediğinize emin misiniz?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
 }
 else
 {

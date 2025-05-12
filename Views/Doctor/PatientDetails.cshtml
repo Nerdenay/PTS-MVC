@@ -1,0 +1,106 @@
+﻿@model PatientTrackingSite.ViewModels.PatientDetailViewModel
+
+@{
+    ViewData["Title"] = "Hasta Detayları";
+    Layout = "~/Views/Shared/_DoctorLayout.cshtml";
+}
+
+<h2 class="mb-4">@Model.Patient.FirstName @Model.Patient.LastName - Detaylar</h2>
+
+<!-- Temel Bilgiler -->
+<div class="mb-4">
+    <h5>Temel Bilgiler</h5>
+    <ul class="list-group">
+        <li class="list-group-item"><strong>Email:</strong> @Model.Patient.Email</li>
+        <li class="list-group-item"><strong>Telefon:</strong> @Model.Patient.Phone</li>
+        <li class="list-group-item"><strong>Doğum Tarihi:</strong> @Model.Patient.BirthDate?.ToString("dd.MM.yyyy")</li>
+        <li class="list-group-item"><strong>Adres:</strong> @Model.Patient.Address</li>
+        <li class="list-group-item"><strong>Toplam Randevu Sayısı:</strong> @Model.AppointmentCount</li>
+    </ul>
+</div>
+
+<!-- Hastalıklar -->
+@if (Model.Diseases.Any())
+{
+    <div class="mb-4">
+        <h5>Tanılar (Hastalıklar)</h5>
+        <ul class="list-group">
+            @foreach (var d in Model.Diseases)
+            {
+                <li class="list-group-item">
+                    <strong>@d.Name:</strong> @d.Description
+                </li>
+            }
+        </ul>
+    </div>
+}
+else
+{
+    <div class="alert alert-info">Hasta ile ilgili hastalık bilgisi bulunmamaktadır.</div>
+}
+
+
+<!-- İlaçlar -->
+@if (Model.Medications.Any())
+{
+    <div class="mb-4">
+        <h5>Yazılan İlaçlar</h5>
+        <table class="table table-sm table-bordered align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>İsim</th>
+                    <th>Dozaj</th>
+                    <th>Kullanım Talimatı</th>
+                    <th style="width: 100px;">İşlem</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var m in Model.Medications)
+                {
+                    <tr>
+                        <td>@m.Name</td>
+                        <td>@m.Dosage</td>
+                        <td>@m.Instructions</td>
+                        <td>
+                            <a href="/Doctor/EditPrescription/@m.Id" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-edit"></i> Düzenle
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-info">Hasta ile ilgili ilaç bilgisi bulunmamaktadır.</div>
+}
+
+
+
+<!-- Yüklenen Görüntüler -->
+@if (Model.MedicalImages.Any())
+{
+    <div class="mb-4">
+        <h5>Yüklenen Röntgen/Görüntüler</h5>
+        <div class="row">
+            @foreach (var img in Model.MedicalImages)
+            {
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <img src="@img.ImagePath" class="card-img-top" alt="Röntgen" />
+                        <div class="card-body">
+                            <p class="card-text">@img.Description</p>
+                            <small class="text-muted">Yüklenme: @img.UploadedAt.ToString("dd.MM.yyyy")</small>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-info">Hasta ile ilgili yüklenmiş görüntü bulunmamaktadır.</div>
+}
