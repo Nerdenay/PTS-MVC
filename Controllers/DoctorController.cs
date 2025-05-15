@@ -23,5 +23,6 @@ namespace PatientTrackingSite.Controllers
 
             return View(doctors); ;
         }
+
     }
 }
