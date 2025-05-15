@@ -1,0 +1,35 @@
+﻿@model PatientTrackingSite.ViewModels.DiseaseCreateViewModel
+
+@{
+    ViewData["Title"] = "Hastalık Ekle";
+    Layout = "~/Views/Shared/_DoctorLayout.cshtml";
+}
+
+<h2 class="mb-4">Hastalık Ekle</h2>
+
+<form asp-action="CreateDisease" method="post" class="bg-white p-4 shadow rounded">
+    <div class="mb-3">
+        <label asp-for="SelectedPatientId" class="form-label">Hasta</label>
+        <select asp-for="SelectedPatientId" class="form-select" asp-items="Model.PatientList">
+            <option value="">-- Hasta Seçiniz --</option>
+        </select>
+        <span asp-validation-for="SelectedPatientId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label">Hastalık Adı</label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label">Açıklama</label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-success">Kaydet</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

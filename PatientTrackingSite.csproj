@@ -19,11 +19,14 @@
 
   <ItemGroup>
     <Content Remove="Views\PatientViewModel.cshtml" />
+    <Content Remove="wwwroot\medical-files\24b13f0e-61f9-4ba3-b7a7-8e390eda4fd8.pdf" />
+    <Content Remove="wwwroot\medical-files\6fb954d4-95a4-4ec9-a7f6-5aac262a311a.pdf" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Views\Account\" />
     <Folder Include="Views\Patient\" />
+    <Folder Include="wwwroot\medical-files\" />
   </ItemGroup>
 
   <ItemGroup>

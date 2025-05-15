@@ -1,0 +1,35 @@
+﻿@model PatientTrackingSite.ViewModels.MedicalImageUploadViewModel
+
+@{
+    ViewData["Title"] = "Tahlil Sonucu Yükle";
+    Layout = "~/Views/Shared/_DoctorLayout.cshtml";
+}
+
+<h2 class="mb-4">Tahlil Sonucu Yükle</h2>
+
+<form asp-action="UploadMedicalFile" method="post" enctype="multipart/form-data" class="bg-white p-4 shadow rounded">
+    <div class="mb-3">
+        <label asp-for="SelectedPatientId" class="form-label">Hasta</label>
+        <select asp-for="SelectedPatientId" class="form-select" asp-items="Model.PatientList">
+            <option value="">-- Hasta Seçiniz --</option>
+        </select>
+        <span asp-validation-for="SelectedPatientId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label">Açıklama</label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="File" class="form-label">Dosya Seç (.jpg, .png, .pdf)</label>
+        <input asp-for="File" type="file" class="form-control" accept=".jpg,.jpeg,.png,.pdf" />
+        <span asp-validation-for="File" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">Yükle</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

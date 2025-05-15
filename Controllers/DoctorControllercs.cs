@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PatientTrackingSite.Models;
 using PatientTrackingSite.ViewModels;
+using Microsoft.AspNetCore.Hosting;
+using System;
+using Microsoft.Extensions.Hosting;
 
 
 namespace PatientTrackingSite.Controllers
@@ -10,10 +13,13 @@ namespace PatientTrackingSite.Controllers
     public class DoctorController : Controller
     {
         private readonly PTSDBContext _context;
+        private readonly IWebHostEnvironment _env;
 
-        public DoctorController(PTSDBContext context)
+
+        public DoctorController(IWebHostEnvironment env, PTSDBContext context)
         {
             _context = context;
+            _env = env;
         }
 
         public IActionResult Index()
@@ -234,6 +240,187 @@ namespace PatientTrackingSite.Controllers
 
             return RedirectToAction("PatientDetails", new { id = medication.PatientId });
         }
+
+
+        [HttpGet]
+        public IActionResult UploadMedicalFile()
+        {
+            var model = new MedicalImageUploadViewModel
+            {
+                PatientList = _context.Users
+                    .Where(u => u.Role == "Patient")
+                    .Select(p => new SelectListItem
+                    {
+                        Value = p.Id.ToString(),
+                        Text = p.FirstName + " " + p.LastName
+                    }).ToList()
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UploadMedicalFile(MedicalImageUploadViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                model.PatientList = _context.Users
+                    .Where(u => u.Role == "Patient")
+                    .Select(p => new SelectListItem
+                    {
+                        Value = p.Id.ToString(),
+                        Text = p.FirstName + " " + p.LastName
+                    }).ToList();
+
+                return View(model);
+            }
+
+            var uploadsFolder = Path.Combine(_env.WebRootPath, "medical-files");
+            if (!Directory.Exists(uploadsFolder))
+                Directory.CreateDirectory(uploadsFolder);
+
+            var uniqueName = Guid.NewGuid().ToString() + Path.GetExtension(model.File.FileName);
+            var filePath = Path.Combine(uploadsFolder, uniqueName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await model.File.CopyToAsync(stream);
+            }
+
+            var medicalImage = new MedicalImage
+            {
+                PatientId = model.SelectedPatientId,
+                ImagePath = "/medical-files/" + uniqueName,
+                Description = model.Description,
+                UploadedAt = DateTime.Now
+            };
+
+            _context.MedicalImages.Add(medicalImage);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("PatientDetails", new { id = model.SelectedPatientId });
+        }
+
+
+        [HttpGet]
+        public IActionResult CreateDisease()
+        {
+            var model = new DiseaseCreateViewModel
+            {
+                PatientList = _context.Users
+                    .Where(u => u.Role == "Patient")
+                    .Select(p => new SelectListItem
+                    {
+                        Value = p.Id.ToString(),
+                        Text = p.FirstName + " " + p.LastName
+                    }).ToList()
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult CreateDisease(DiseaseCreateViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                // View'e tekrar gösterilecekse listeyi yeniden doldur
+                model.PatientList = _context.Users
+                    .Where(u => u.Role == "Patient")
+                    .Select(p => new SelectListItem
+                    {
+                        Value = p.Id.ToString(),
+                        Text = p.FirstName + " " + p.LastName
+                    }).ToList();
+
+                return View(model);
+            }
+
+            var disease = new Disease
+            {
+                Name = model.Name,
+                Description = model.Description,
+                PatientId = model.SelectedPatientId
+            };
+
+            _context.Diseases.Add(disease);
+            _context.SaveChanges();
+
+            return RedirectToAction("PatientDetails", new { id = model.SelectedPatientId });
+        }
+
+        [HttpGet]
+        public IActionResult EditDisease(int id)
+        {
+            var disease = _context.Diseases.FirstOrDefault(d => d.Id == id);
+            if (disease == null) return NotFound();
+
+            var model = new DiseaseCreateViewModel
+            {
+                Id = disease.Id,
+                Name = disease.Name,
+                Description = disease.Description,
+                SelectedPatientId = disease.PatientId,
+                PatientList = _context.Users
+                    .Where(u => u.Role == "Patient")
+                    .Select(p => new SelectListItem
+                    {
+                        Value = p.Id.ToString(),
+                        Text = p.FirstName + " " + p.LastName
+                    })
+                    .ToList()
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult EditDisease(DiseaseCreateViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                model.PatientList = _context.Users
+                    .Where(u => u.Role == "Patient")
+                    .Select(p => new SelectListItem
+                    {
+                        Value = p.Id.ToString(),
+                        Text = p.FirstName + " " + p.LastName
+                    })
+                    .ToList();
+
+                return View(model);
+            }
+
+            var disease = _context.Diseases.FirstOrDefault(d => d.Id == model.Id);
+            if (disease == null) return NotFound();
+
+            disease.Name = model.Name;
+            disease.Description = model.Description;
+            disease.PatientId = model.SelectedPatientId;
+
+            _context.SaveChanges();
+
+            return RedirectToAction("PatientDetails", new { id = model.SelectedPatientId });
+        }
+
+
+        [HttpGet]
+        public IActionResult SearchPatient(string query)
+        {
+            if (string.IsNullOrEmpty(query))
+                return RedirectToAction("Index");
+
+            var patient = _context.Users
+                .FirstOrDefault(p => (p.FirstName + " " + p.LastName).ToLower().Contains(query.ToLower()) && p.Role == "Patient");
+
+            if (patient != null)
+                return RedirectToAction("PatientDetails", new { id = patient.Id });
+
+            TempData["SearchError"] = "Hasta bulunamadı.";
+            return RedirectToAction("Index");
+        }
+
+
 
 
 

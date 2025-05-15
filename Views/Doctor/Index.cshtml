@@ -5,6 +5,17 @@
 
 <h2 class="mb-4">Hoş geldiniz, Doktor!</h2>
 
+@if (TempData["SearchError"] != null)
+{
+    <div class="alert alert-warning">
+        @TempData["SearchError"]
+    </div>
+}
+
+<div class="alert alert-success">
+    Bugün sistemde yeni hastaları ve randevuları yönetebilirsiniz.
+</div>
+
 <div class="row g-4">
     <div class="col-md-4">
         <div class="card border-0 shadow-sm bg-gradient bg-primary text-white">
