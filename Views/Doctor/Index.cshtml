@@ -1,0 +1,38 @@
+﻿@using PatientTrackingSite.Models
+@model List<PatientTrackingSite.Models.User>
+
+@{
+	ViewData["Title"] = "Doktors";
+    Layout = "_PatientLayout";
+}
+
+<h2 class="mb-4">Our Doctors</h2>   
+
+<div class="row">
+    @foreach (var doctor in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm text-center">
+                <div class="card-body">
+                    <img src="@Url.Content(doctor.ProfileImagePath ?? "~/images/doctors/default.png")"
+                         alt="Profil Resmi"
+                         class="img-fluid rounded-circle mb-3"
+                         style="width: 100px; height: 100px; object-fit: cover;" />
+
+                    <h5 class="card-title">@doctor.FirstName @doctor.LastName</h5>
+
+                    @if (!string.IsNullOrEmpty(doctor.Specialization))
+                    {
+                        <p class="card-text text-muted">@doctor.Specialization</p>
+                    }
+
+                    <p class="card-text small"><strong>Email:</strong> @doctor.Email</p>
+                    <p class="card-text small"><strong>Telefon:</strong> @doctor.Phone</p>
+
+                    <a href="#" class="btn btn-sm btn-outline-primary me-2">Detay</a>
+                    <a href="#" class="btn btn-sm btn-success">Randevu Al</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>

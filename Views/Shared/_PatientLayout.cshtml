@@ -1,15 +1,14 @@
-﻿
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@ViewData["Title"] - Patient Tracking Site</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
     <style>
-
         body {
             font-family: 'Segoe UI', sans-serif;
             background-color: #f4f6f9;
@@ -24,11 +23,8 @@
             min-height: 100vh;
             padding: 1.5rem 1rem;
             position: fixed;
-            border-right:4px;
-            border-right-style:solid;
-            border-right-color:black;
+            border-right: 4px solid black;
             transition: all 0.3s ease;
-            
         }
 
             .sidebar a {
@@ -44,20 +40,17 @@
                     background-color: #1e3a60;
                 }
 
-                
-
-
-        logo-container {
-            margin-bottom: 1rem; /* Eskiden 4rem'e denk gelen mb-4 vardı, burada küçültüyoruz */
+        .logo-container {
+            margin-bottom: 1rem;
             text-align: center;
         }
 
         .logo-img {
-            max-width: 140px; /* Daha sabit ve küçük bir genişlik */
+            max-width: 140px;
             height: auto;
-            padding: 0; /* Paddingi kaldırıyoruz */
+            padding: 0;
             display: block;
-            margin: 0 auto; /* Ortalansın */
+            margin: 0 auto;
         }
 
         .main-content {
@@ -86,17 +79,15 @@
             width: 0;
             padding: 0;
             overflow: hidden;
-            transition: all 0.3s ease;
         }
 
         .main-content.collapsed {
             margin-left: 0;
             width: 100%;
-            transition: all 0.3s ease;
         }
 
         .toggle-btn {
-            background-color: #1e3a60; /* Koyu mavi */
+            background-color: #1e3a60;
             color: white;
             border: solid;
             padding: 8px 12px;
@@ -105,43 +96,29 @@
         }
 
             .toggle-btn:hover {
-                background-color: #2d4e7c; /* Hover rengi */
+                background-color: #2d4e7c;
             }
-       
     </style>
-
 </head>
 
 <body>
     <!-- Sidebar -->
     <div class="sidebar">
-
-        <div class="text-center logo-container">
-            <img src="~/images/Logo.png" class="logo-img" />
+        <div class="logo-container">
+            <img src="~/images/Logo.png" class="logo-img" alt="Logo" />
         </div>
 
-
-         <div>
-            <!-- Profil bilgileri -->          
-            
-        </div>
-
-        <a href="#"><i class="fas fa-user-md me-2"></i>Doktorlar</a>
-        <a href="#"><i class="fa-solid fa-receipt"></i> Reçetelerim</a> <!-- İlaçlarım vb de burda gözükebilir-->
-        <a href="#"><i class="fa-solid fa-x-ray"></i> Görüntülerim</a>
+        <a href="/Doctor/Index">
+            <i class="fas fa-user-md me-2"></i>Doctors
+         </a>
+        <a href="#">
+            <i class="fa-solid fa-receipt me-2"></i>Reçetelerim
+         </a>
+        <a href="#"><i class="fa-solid fa-x-ray me-2"></i>Görüntülerim</a>
         <a href="#"><i class="fas fa-vials me-2"></i>Tahlillerim</a>
-        <a href="#"><i class="fa-solid fa-disease"></i> Hastalıklarım</a>
-        <a href="#"><i class="fa-solid fa-calendar-days"></i> Randevularım</a>
-
+        <a href="#"><i class="fa-solid fa-disease me-2"></i>Hastalıklarım</a>
+        <a href="#"><i class="fa-solid fa-calendar-days me-2"></i>Randevularım</a>
     </div>
-
-    <!-- Navbar -->
-
-            <!-- Profil link ve ordan çıkış bilgi güncelleme vb  -->
-            <!-- Bildirimler kısmı, randevu vb değişebilir, belki hastaya mail gidebilir  -->
-            <!-- Change the language  -->
-
-
 
     <!-- Main Content -->
     <div class="main-content">
@@ -149,22 +126,51 @@
             <button class="btn btn-outline-primary toggle-btn">
                 <i class="fas fa-bars"></i>
             </button>
-            <div class="search-box">   
+
+            <div class="search-box">
                 <input type="text" placeholder="Merhaba, size nasıl yardım edebilirim?" />
             </div>
+
             <div class="d-flex align-items-center gap-3">
-                <i class="fas fa-bell"></i>
-                <i class="fas fa-user-circle"></i>
-                <i class="fas fa-globe"></i>
+                <!-- Bildirim Butonu -->
+                <div class="dropdown">
+                    <button class="btn btn-light" type="button" id="notifDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-bell"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notifDropdown">
+                        <li><span class="dropdown-item-text text-muted">Yeni bildiriminiz yok</span></li>
+                        <!-- <li><a class="dropdown-item" href="#">Randevunuz onaylandı</a></li> -->
+                    </ul>
+                </div>
+
+                <!-- Profil Butonu -->
+                <div class="dropdown">
+                    <button class="btn btn-light" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user-circle"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                        <li><a class="dropdown-item" href="/Profile">Profilim</a></li>
+                        <li><a class="dropdown-item" href="/Account/Logout">Çıkış Yap</a></li>
+                    </ul>
+                </div>
+
+                <!-- Dil Değiştir Butonu -->
+                <div class="dropdown">
+                    <button class="btn btn-light" type="button" id="langDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-globe"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="langDropdown">
+                        <li><a class="dropdown-item" href="?lang=tr">Türkçe</a></li>
+                        <li><a class="dropdown-item" href="?lang=en">English</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
+
         <div class="container-fluid p-4">
             @RenderBody()
         </div>
     </div>
-
-    <!-- Footer -->
-
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>

@@ -32,6 +32,10 @@ namespace PatientTrackingSite.Models
 
         public string Address { get; set; }
 
+        public string? Specialization { get; set; } // Only for doctors
+
+        public string? ProfileImagePath { get; set; } // Only For Doctors
+
         // Navigation
         public ICollection<Appointment> AppointmentsAsPatient { get; set; }
         public ICollection<Appointment> AppointmentsAsDoctor { get; set; }
