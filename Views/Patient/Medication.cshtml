@@ -1,0 +1,35 @@
+﻿@model List<PatientTrackingSite.Models.Medication>
+
+@{
+    ViewData["Title"] = "Medications";
+    Layout = "_PatientLayout";
+}
+
+<h2 class="mb-4">MyMedications</h2>
+
+@if (Model.Count == 0)
+{
+    <div class="alert alert-info">
+        Henüz sistemde kayıtlı bir reçeteniz bulunmamaktadır.
+    </div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+        @foreach (var med in Model)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">@med.Name</h5>
+                        <p class="card-text"><strong>Dozaj:</strong> @med.Dosage</p>
+                        <p class="card-text"><strong>Kullanım:</strong> @med.Instructions</p>
+                    </div>
+                    <div class="card-footer text-muted">
+                        Doktor tarafından reçete edildi.
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
