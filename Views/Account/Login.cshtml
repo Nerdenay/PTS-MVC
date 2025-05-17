@@ -1,0 +1,127 @@
+﻿@model PatientTrackingSite.ViewModels.LoginViewModel
+
+@{
+    ViewData["Title"] = "Giriş Yap";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"]</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <style>
+        body {
+            background: url('/images/login-bg.jpg') no-repeat center center;
+            background-size: cover;
+            height: 100vh;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .login-box {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 3rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            max-width: 420px;
+            width: 100%;
+            text-align: center;
+        }
+
+            .login-box img.logo {
+                max-width: 120px;
+                margin-bottom: 1rem;
+            }
+
+        .form-control:focus {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+        }
+
+        .btn-primary {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+
+            .btn-primary:hover {
+                background-color: #c82333;
+                border-color: #bd2130;
+            }
+
+        .form-footer {
+            margin-top: 1rem;
+        }
+
+            .form-footer a {
+                color: #dc3545;
+                font-weight: 500;
+                text-decoration: none;
+            }
+
+                .form-footer a:hover {
+                    text-decoration: underline;
+                }
+
+        .toggle-password {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <img src="~/images/Logo.png" class="logo" alt="PTS Logo" />
+        <h4 class="mb-4">Hasta Takip Sistemine Giriş</h4>
+
+        <form asp-action="Login" method="post">
+            <div class="mb-3 text-start">
+                <label asp-for="TCNo" class="form-label">TC Kimlik Numarası</label>
+                <input asp-for="TCNo" class="form-control" placeholder="11 haneli TC Kimlik No" />
+                <span asp-validation-for="TCNo" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3 text-start position-relative">
+                <label asp-for="Password" class="form-label">Şifre</label>
+                <div class="input-group">
+                    <input asp-for="Password" type="password" class="form-control" id="passwordInput" placeholder="Şifrenizi girin" />
+                    <span class="input-group-text toggle-password" id="togglePassword">
+                        <i class="fa fa-eye-slash"></i>
+                    </span>
+                </div>
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Giriş Yap</button>
+        </form>
+
+        <div class="form-footer">
+            <p>Henüz hesabınız yok mu? <a href="/Account/Register">Kayıt Ol</a></p>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+
+    <script>
+        const togglePassword = document.getElementById("togglePassword");
+        const passwordInput = document.getElementById("passwordInput");
+
+        togglePassword.addEventListener("click", function () {
+            const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+            passwordInput.setAttribute("type", type);
+            this.innerHTML = type === "password"
+                ? '<i class="fa fa-eye-slash"></i>'
+                : '<i class="fa fa-eye"></i>';
+        });
+    </script>
+</body>
+</html>

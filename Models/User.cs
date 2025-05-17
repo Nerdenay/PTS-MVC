@@ -36,6 +36,10 @@ namespace PatientTrackingSite.Models
 
         public string? ProfileImagePath { get; set; } // Only For Doctors
 
+        [Required]
+        [StringLength(11, MinimumLength = 11, ErrorMessage = "TC No should be 11 character.")]
+        public string TCNo { get; set; }
+
         // Navigation
         public ICollection<Appointment> AppointmentsAsPatient { get; set; }
         public ICollection<Appointment> AppointmentsAsDoctor { get; set; }

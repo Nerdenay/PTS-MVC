@@ -36,6 +36,12 @@ namespace PatientTrackingSite.Models
                 .WithMany(u => u.AppointmentsAsDoctor)
                 .HasForeignKey(a => a.DoctorId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.TCNo)
+                .IsUnique(); // Make it unique tc no should be unique
+
+                 base.OnModelCreating(modelBuilder);
         }
 
     }

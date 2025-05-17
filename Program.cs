@@ -3,8 +3,13 @@ using PatientTrackingSite.Models;
 using System;
 
 var builder = WebApplication.CreateBuilder(args);
-
-
+ 
+builder.Services.AddSession(options =>      //Session ayarlarý için 
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Oturum süresi
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -19,6 +24,8 @@ var app = builder.Build();
 
 
 
+
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -28,9 +35,12 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseSession(); //  Burasý önemli
 
 app.UseAuthorization();
 

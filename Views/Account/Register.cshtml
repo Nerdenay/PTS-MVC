@@ -1,0 +1,207 @@
+﻿@model PatientTrackingSite.ViewModels.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Kayıt Ol";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <title>Register - Patient Tracking Site</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(to right, #74ebd5, #ACB6E5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .card {
+            border: none;
+            border-radius: 1rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .left-section {
+            background: url('/images/register-bg.jpg') center/cover no-repeat;
+            border-radius: 1rem 0 0 1rem;
+        }
+
+        .form-section {
+            padding: 2rem 3rem;
+        }
+
+        .form-control:focus {
+            box-shadow: none;
+            border-color: #0d6efd;
+        }
+
+        .form-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .btn-primary {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card flex-row">
+                    <!-- Left picture -->
+                    <div class="col-md-6 left-section d-none d-md-block"></div>
+
+                    <!-- Right Form section -->
+                    <div class="col-md-6 form-section">
+                        <h3 class="form-title text-center">Hasta Kayıt Formu</h3>
+
+                        <form asp-action="Register" method="post">
+                            <div class="mb-3">                              
+                                <label asp-for="FirstName" class="form-label">First Name</label>
+                                <input asp-for="FirstName" class="form-control" placeholder="Please Enter Your Name" />
+                                <span asp-validation-for="FirstName" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">                               
+                                <label asp-for="LastName" class="form-label">Last Name</label>
+                                <input asp-for="LastName" class="form-control" placeholder="Please Enter Your Last Name" />
+                                <span asp-validation-for="LastName" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">                             
+                                <label asp-for="TCNo" class="form-label">TCNO</label>
+                                <input asp-for="TCNo" class="form-control" placeholder="11 char TCNO" />
+                                <span asp-validation-for="TCNo" class="text-danger"></span>
+                            </div>
+
+
+                            <div class="mb-3">                              
+                                <label asp-for="Email" class="form-label"></label>
+                                <input asp-for="Email" class="form-control" placeholder="example@domain.com" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3 position-relative">
+                                <label asp-for="Password" class="form-label"></label>
+                                <div class="input-group">
+                                    <input asp-for="Password" type="password" class="form-control" id="passwordInput" placeholder="Enter Your Password" />
+                                    <button type="button" class="btn btn-outline-secondary" id="togglePassword">
+                                        <i class="fa fa-eye-slash"></i>
+                                    </button>
+                                </div>
+                                <div id="passwordStrength" class="form-text text-muted mt-1"></div>
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">>
+                                <label asp-for="Phone" class="form-label">Phone</label>
+                                <div class="input-group">
+                                    <select class="form-select" id="countryCode">
+                                        <option value="+90" selected>🇹🇷 +90</option>
+                                        <option value="+1">🇺🇸 +1</option>
+                                        <option value="+44">🇬🇧 +44</option>
+                                        <option value="+49">🇩🇪 +49</option>
+                                        <!-- Daha fazla ülke eklenebilir -->
+                                    </select>
+                                    <input asp-for="Phone" class="form-control" id="phoneInput" placeholder="Enter Your Phone Number" />
+                                </div>
+                                <span asp-validation-for="Phone" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="BirthDate" class="form-label"></label>
+                                <input asp-for="BirthDate" type="date" class="form-control" placeholder="Choose Your Birthday"/>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Address" class="form-label"></label>
+                                <textarea asp-for="Address" class="form-control" rows="2" placeholder="Where do you live ?"></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Kayıt Ol</button>
+
+                            <div class="text-center mt-3">
+                                <span>Dou you have account ? </span>
+                                <a href="/Account/Login" class="link-primary">Login</a>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+   
+  
+    <script>
+        const passwordInput = document.getElementById("passwordInput");
+        const togglePassword = document.getElementById("togglePassword");
+        const passwordStrength = document.getElementById("passwordStrength");
+
+        togglePassword.addEventListener("click", function () {
+            const type = passwordInput.type === "password" ? "text" : "password";
+            passwordInput.type = type;
+            this.innerHTML = type === "password"
+                ? '<i class="fa fa-eye-slash"></i>'
+                : '<i class="fa fa-eye"></i>';
+        });
+
+        passwordInput.addEventListener("input", function () {
+            const val = passwordInput.value;
+            if (!val) {
+                passwordStrength.innerText = "";
+                return;
+            }
+
+            let score = 0;
+            if (val.length >= 8) score++;
+            if (/[A-Z]/.test(val)) score++;
+            if (/[0-9]/.test(val)) score++;
+            if (/[^A-Za-z0-9]/.test(val)) score++;
+
+            const messages = ["Weak", "Nice", "Strong", "Powerful"];
+            const colors = ["red", "orange", "green", "darkgreen"];
+            passwordStrength.innerText = "Şifre Gücü: " + messages[score - 1];
+            passwordStrength.style.color = colors[score - 1];
+        });
+    </script>
+
+    <script>
+        const countryCode = document.getElementById("countryCode");
+        const phoneInput = document.getElementById("phoneInput");
+
+        countryCode.addEventListener("change", () => {
+            if (!phoneInput.value.startsWith(countryCode.value)) {
+                phoneInput.value = countryCode.value;
+            }
+        });
+
+        phoneInput.addEventListener("focus", () => {
+            if (!phoneInput.value.startsWith(countryCode.value)) {
+                phoneInput.value = countryCode.value;
+            }
+        });
+    </script>
+    <partial name="_ValidationScriptsPartial" />
+</body>
+</html>

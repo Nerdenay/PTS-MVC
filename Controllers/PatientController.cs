@@ -24,11 +24,19 @@ namespace PatientTrackingSite.Controllers
             return View(doctors); ;
         }
 
+
         public IActionResult Medication()
         {
 
+            // Simülasyon: login olmadan hasta id'yi elle set et
+            HttpContext.Session.SetInt32("UserId", 2); // sadece ilk sayfaya girerken  Burası login olunca silincek
+
+
             // Simülasyon: Giriş yapan kullanıcının hasta ID’si
             var patientId = HttpContext.Session.GetInt32("UserId");
+
+            // Simülasyon: login olmadan hasta id'yi elle set et
+            HttpContext.Session.SetInt32("UserId", 2); // sadece ilk sayfaya girerken
 
             if (patientId == null)
                 return RedirectToAction("Login", "Account");  // Girii yapmamışsa yapsın
