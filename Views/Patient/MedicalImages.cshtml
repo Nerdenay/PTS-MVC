@@ -1,0 +1,45 @@
+﻿@model List<PatientTrackingSite.Models.MedicalImage>
+@{
+    ViewData["Title"] = "Lab Results";
+    Layout = "_PatientLayout";
+}
+
+@section Styles {
+    <style>
+        .lab-card {
+            transition: transform 0.2s ease;
+        }
+
+            .lab-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            }
+    </style>
+}
+
+<h2 class="mb-4"><i class="fas fa-file-medical me-2"></i> Lab Results</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-warning">No results found in the system.</div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach (var item in Model)
+        {
+            <div class="col">
+                <div class="card lab-card h-100 border-info">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-file-pdf text-danger me-2"></i> @item.Description</h5>
+                        <p><strong>Uploaded:</strong> @item.UploadedAt.ToShortDateString()</p>
+
+                        <a href="@Url.Content(item.ImagePath)" target="_blank" class="btn btn-outline-primary btn-sm">  <!-- Image pathe göre düzenle-->
+                            View / Download
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

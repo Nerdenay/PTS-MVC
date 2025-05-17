@@ -13,7 +13,8 @@ namespace PatientTrackingSite.Controllers
             _context = context;
         }
 
-        // Doktorları listele
+
+        // Doctors ------------------------------------------------------------------------------------------
         public IActionResult Doctors()
         {
             var doctors = _context.Users
@@ -23,7 +24,8 @@ namespace PatientTrackingSite.Controllers
             return View(doctors);
         }
 
-        // Reçeteleri listele
+
+        // Medications ---------------------------------------------------------------------------------------
         public IActionResult Medication()
         {
             // Giriş yapan hastanın ID'sini session'dan al
@@ -39,6 +41,24 @@ namespace PatientTrackingSite.Controllers
             // Ayrıca doktor reçeteyi oluştururken DoctorId değerini de veritabanına kaydediyor olman gerekir. !!!
 
             return View(medications);
+        }
+
+
+
+        // Medical imagess ---------------------------------------------------------------------------------
+
+        public IActionResult MedicalImages()
+        {
+            var patientId = HttpContext.Session.GetInt32("UserId"); // Giriş yapan hastanın ID'sini session'dan al
+
+            if (patientId == null)
+                return RedirectToAction("Login", "Account");
+
+            var images = _context.MedicalImages
+                .Where(m => m.PatientId == patientId)
+                .ToList();
+
+            return View(images);
         }
     }
 }
