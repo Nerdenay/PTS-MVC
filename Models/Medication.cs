@@ -23,5 +23,10 @@ namespace PatientTrackingSite.Models
         [ForeignKey("PatientId")]
         public User Patient { get; set; }
 
+        public int? DoctorId { get; set; } // optional
+
+        [ForeignKey("DoctorId")]
+        public User Doctor { get; set; }
+
     }
 }

@@ -1,32 +1,63 @@
 ﻿@model List<PatientTrackingSite.Models.Medication>
 
 @{
-    ViewData["Title"] = "Medications";
+    ViewData["Title"] = "My Medications";
     Layout = "_PatientLayout";
 }
 
-<h2 class="mb-4">MyMedications</h2>
+@section Styles {
+    <style>
+        .medication-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+            .medication-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            }
+
+        .medication-icon {
+            font-size: 2rem;
+            color: #0d6efd;
+        }
+
+        .card-footer {
+            font-size: 0.85rem;
+        }
+    </style>
+}
+
+<h2 class="mb-4"><i class="fas fa-pills medication-icon"></i> My Medications</h2>
 
 @if (!Model.Any())
 {
     <div class="alert alert-info">
-        Şu anda sistemde sizin için tanımlanmış reçete bulunmamaktadır.
+        You currently have no prescriptions in the system.
     </div>
 }
 else
 {
-    <div class="row row-cols-1 row-cols-md-2 g-4">
-        @foreach (var recete in Model)
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach (var med in Model)
         {
             <div class="col">
-                <div class="card h-100 shadow-sm">
+                <div class="card medication-card h-100 shadow-sm border-primary">
                     <div class="card-body">
-                        <h5 class="card-title">@recete.Name</h5>
-                        <p><strong>Dozaj:</strong> @recete.Dosage</p>
-                        <p><strong>Kullanım Talimatı:</strong> @recete.Instructions</p>
+                        <h5 class="card-title text-primary">
+                            <i class="fas fa-capsules me-1"></i> @med.Name
+                        </h5>
+                        <p><strong>Dosage:</strong> @med.Dosage</p>
+                        <p><strong>Instructions:</strong> @med.Instructions</p>
+
+                        @if (med.Doctor != null)
+                        {
+                            <p class="mb-0">
+                                <strong>Prescribed by:</strong> Dr. @med.Doctor.FirstName @med.Doctor.LastName
+                            </p>
+                        }
                     </div>
-                    <div class="card-footer text-muted text-end">
-                        Sisteme doktor tarafından girildi.
+                    <div class="card-footer text-end text-muted">
+                        Entered by doctor in the system.
                     </div>
                 </div>
             </div>

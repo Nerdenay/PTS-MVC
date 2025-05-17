@@ -45,7 +45,8 @@ namespace PatientTrackingSite.Models
         public ICollection<Appointment> AppointmentsAsDoctor { get; set; }
 
         public ICollection<Disease> Diseases { get; set; }
-        public ICollection<Medication> Medications { get; set; }
+        public ICollection<Medication> MedicationsAsPatient { get; set; }
+        public ICollection<Medication> MedicationsAsDoctor { get; set; }
         public ICollection<MedicalImage> MedicalImages { get; set; }
 
 

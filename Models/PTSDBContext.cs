@@ -41,7 +41,20 @@ namespace PatientTrackingSite.Models
                 .HasIndex(u => u.TCNo)
                 .IsUnique(); // Make it unique tc no should be unique
 
-                 base.OnModelCreating(modelBuilder);
+            base.OnModelCreating(modelBuilder);
+
+
+            modelBuilder.Entity<Medication>()
+                .HasOne(m => m.Patient)
+                .WithMany(u => u.MedicationsAsPatient)
+                .HasForeignKey(m => m.PatientId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Medication>()
+                .HasOne(m => m.Doctor)
+                .WithMany(u => u.MedicationsAsDoctor)
+                .HasForeignKey(m => m.DoctorId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
 
     }

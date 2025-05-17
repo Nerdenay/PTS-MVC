@@ -1,38 +1,77 @@
 ﻿@using PatientTrackingSite.Models
-@model List<PatientTrackingSite.Models.User>
+@model List<User>
 
 @{
-	ViewData["Title"] = "Doktors";
+    ViewData["Title"] = "Doctors";
     Layout = "_PatientLayout";
 }
 
-<h2 class="mb-4">Our Doctors</h2>   
+@section Styles {
+    <style>
+        .doctor-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+            .doctor-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            }
+
+        .badge-specialization {
+            background-color: #0d6efd;
+            color: white;
+            font-size: 0.85rem;
+            padding: 0.4em 0.7em;
+            border-radius: 1rem;
+        }
+
+        .doctor-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border: 2px solid #dee2e6;
+        }
+
+        .card-buttons .btn {
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+            .card-buttons .btn:hover {
+                opacity: 0.9;
+            }
+    </style>
+}
+
+<h2 class="mb-4">Our Doctors</h2>
 
 <div class="row">
     @foreach (var doctor in Model)
     {
         <div class="col-md-4 mb-4">
-            <div class="card shadow-sm text-center">
+            <div class="card doctor-card text-center shadow-sm h-100">
                 <div class="card-body">
-                    <img src="@Url.Content(doctor.ProfileImagePath ?? "~/images/doctors/default.png")"
-                         alt="Profile Picture"
-                         class="img-fluid rounded-circle mb-3"
-                         style="width: 100px; height: 100px; object-fit: cover;" />
+                    <img src="@Url.Content(doctor.ProfileImagePath ?? "~/images/Doctors/default.jpg")"
+                        
+                         class="img-fluid rounded-circle mb-3 doctor-image" />
 
                     <h5 class="card-title">@doctor.FirstName @doctor.LastName</h5>
 
                     @if (!string.IsNullOrEmpty(doctor.Specialization))
                     {
-                        <p class="card-text text-muted">@doctor.Specialization</p>
+                        <p><span class="badge-specialization">@doctor.Specialization</span></p>
+                    }
+                    else
+                    {
+                        <p><span class="badge bg-secondary">General Practitioner </span></p>
                     }
 
-                    <p class="card-text small"><strong>Email:</strong> @doctor.Email</p>
-                    <p class="card-text small"><strong>Phone:</strong> @doctor.Phone</p>
+                    <p class="card-text small mb-1"><strong>Email:</strong> @doctor.Email</p>
+                    <p class="card-text small"><strong>Telefon:</strong> @doctor.Phone</p>
 
-
-                    <a href="#" class="btn btn-sm btn-outline-primary me-2">Info</a>
-                    <a href="#" class="btn btn-sm btn-success">Make an appointment</a>
-
+                    <div class="card-buttons d-flex justify-content-center gap-2 mt-3">
+                        <a href="#" class="btn btn-outline-primary btn-sm">Info</a>
+                        <a href="#" class="btn btn-success btn-sm">Make an appointment </a>
+                    </div>
                 </div>
             </div>
         </div>

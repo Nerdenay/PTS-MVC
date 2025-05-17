@@ -1,12 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PatientTrackingSite.Models;
-using System;
 
 namespace PatientTrackingSite.Controllers
 {
     public class PatientController : Controller
-
     {
         private readonly PTSDBContext _context;
 
@@ -15,41 +13,32 @@ namespace PatientTrackingSite.Controllers
             _context = context;
         }
 
+        // Doktorları listele
         public IActionResult Doctors()
         {
             var doctors = _context.Users
-           .Where(u => u.Role == "Doctor")
-           .ToList();
+                .Where(u => u.Role == "Doctor")
+                .ToList();
 
-            return View(doctors); ;
+            return View(doctors);
         }
 
-
+        // Reçeteleri listele
         public IActionResult Medication()
         {
-
-            // Simülasyon: login olmadan hasta id'yi elle set et
-            HttpContext.Session.SetInt32("UserId", 2); // sadece ilk sayfaya girerken  Burası login olunca silincek
-
-
-            // Simülasyon: Giriş yapan kullanıcının hasta ID’si
+            // Giriş yapan hastanın ID'sini session'dan al
             var patientId = HttpContext.Session.GetInt32("UserId");
 
-            // Simülasyon: login olmadan hasta id'yi elle set et
-            HttpContext.Session.SetInt32("UserId", 2); // sadece ilk sayfaya girerken
-
             if (patientId == null)
-                return RedirectToAction("Login", "Account");  // Girii yapmamışsa yapsın
+                return RedirectToAction("Login", "Account");  // Giriş yapılmamışsa login sayfasına yönlendir
 
             var medications = _context.Medications
                 .Where(m => m.PatientId == patientId)
-                .Include(m => m.Patient)
+                .Include(m => m.Doctor)  // Reçeteyi yazan doktor bilgisi
                 .ToList();
+            // Ayrıca doktor reçeteyi oluştururken DoctorId değerini de veritabanına kaydediyor olman gerekir. !!!
 
             return View(medications);
-
-
-
         }
     }
 }
