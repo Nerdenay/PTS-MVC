@@ -1,0 +1,22 @@
+﻿@{
+    ViewData["Title"] = "Fotoğraf Test";
+}
+
+<h2>Profil Fotoğrafı Yükleme Testi</h2>
+
+<form method="post" enctype="multipart/form-data">
+    <div class="mb-3">
+        <input type="file" name="file" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Yükle</button>
+</form>
+
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-info mt-3">@ViewBag.Message</div>
+
+    @if (ViewBag.ImagePath != null)
+    {
+        <img src="@ViewBag.ImagePath" width="150" class="mt-2" />
+    }
+}

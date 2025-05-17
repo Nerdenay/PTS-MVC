@@ -24,22 +24,52 @@ namespace PatientTrackingSite.Controllers
 
         public IActionResult Index()
         {
-            int doctorId = 1; // Geçici sabit doktor
-
+            int doctorId = 1;
             var today = DateTime.Today;
+            var future14End = today.AddDays(14);
+            var thisMonth = new DateTime(today.Year, today.Month, 1);
 
-            ViewBag.TodayAppointments = _context.Appointments
-                .Where(a => a.DoctorId == doctorId && a.AppointmentDate.Date == today)
-                .Count();
-
-            ViewBag.TotalPatients = _context.Appointments
+            // Doktorun hastaları
+            var patientIds = _context.Appointments
                 .Where(a => a.DoctorId == doctorId)
                 .Select(a => a.PatientId)
                 .Distinct()
-                .Count();
+                .ToList();
+
+            ViewBag.TodayAppointments = _context.Appointments
+                .Count(a => a.DoctorId == doctorId && a.AppointmentDate.Date == today);
+
+            ViewBag.TotalPatients = patientIds.Count;
+
+            ViewBag.TotalPrescriptions = _context.Medications
+                .Count(m => patientIds.Contains(m.PatientId));
+
+            ViewBag.TotalDiseases = _context.Diseases
+                .Count(d => patientIds.Contains(d.PatientId));
+
+            ViewBag.TotalMedicalImages = _context.MedicalImages
+                .Count(i => patientIds.Contains(i.PatientId));
+
+            ViewBag.UpcomingAppointments = _context.Appointments
+                .Count(a => a.DoctorId == doctorId &&
+                            a.AppointmentDate.Date > today &&
+                            a.AppointmentDate.Date <= future14End);
+
+            var busiestUpcomingDay = _context.Appointments
+                .Where(a => a.DoctorId == doctorId &&
+                            a.AppointmentDate.Date > today &&
+                            a.AppointmentDate.Date <= future14End)
+                .GroupBy(a => a.AppointmentDate.Date)
+                .Select(g => new { Date = g.Key, Count = g.Count() })
+                .OrderByDescending(g => g.Count)
+                .FirstOrDefault();
+
+            ViewBag.BusiestUpcomingDayDate = busiestUpcomingDay?.Date.ToString("dd.MM.yyyy") ?? "-";
+            ViewBag.BusiestUpcomingDayCount = busiestUpcomingDay?.Count ?? 0;
 
             return View();
         }
+
 
         public IActionResult MyPatients()
         {
