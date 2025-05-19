@@ -1,0 +1,28 @@
+﻿@model List<PatientTrackingSite.ViewModels.PatientListItemViewModel>
+
+@{
+    ViewData["Title"] = "Hastalarım";
+    Layout = "~/Views/Shared/_DoctorLayout.cshtml";
+}
+
+<h2 class="mb-4">Hastalarım</h2>
+
+@if (Model != null && Model.Any())
+{
+    <ul class="list-group">
+        @foreach (var patient in Model)
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                @($"{patient.FirstName} {patient.LastName}")
+                <a href="/Doctor/PatientDetails/@patient.PatientId" class="btn btn-outline-info btn-sm">
+                    <i class="fas fa-info-circle me-1"></i> Detay
+                </a>
+
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <div class="alert alert-info">Kayıtlı hasta bulunmamaktadır.</div>
+}

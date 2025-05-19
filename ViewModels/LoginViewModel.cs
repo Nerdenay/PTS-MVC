@@ -6,7 +6,7 @@ namespace PatientTrackingSite.ViewModels
     {
 
         [Required]
-        [StringLength(11, MinimumLength = 11, ErrorMessage = "TC Kimlik Numarası 11 haneli olmalıdır.")]
+        [StringLength(11, MinimumLength = 11, ErrorMessage = "TC ID should be 11 digits.")]
         public string TCNo { get; set; }
 
         [Required]

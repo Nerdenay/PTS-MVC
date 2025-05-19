@@ -1,0 +1,40 @@
+﻿@model PatientTrackingSite.ViewModels.PrescriptionViewModel
+
+@{
+    ViewData["Title"] = "Reçete Düzenle";
+    Layout = "~/Views/Shared/_DoctorLayout.cshtml";
+}
+
+<h2 class="mb-4">Reçete Düzenle</h2>
+
+<form asp-action="EditPrescription" method="post" class="bg-white p-4 shadow rounded">
+    <input type="hidden" asp-for="SelectedPatientId" />
+
+    <div class="mb-3">
+        <label asp-for="SelectedPatientId" class="form-label">Hasta</label>
+        <select asp-for="SelectedPatientId" asp-items="Model.PatientList" class="form-select" disabled></select>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="MedicationName" class="form-label">İlaç Adı</label>
+        <input asp-for="MedicationName" class="form-control" />
+        <span asp-validation-for="MedicationName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Dosage" class="form-label">Dozaj</label>
+        <input asp-for="Dosage" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Instructions" class="form-label">Kullanım Talimatı</label>
+        <textarea asp-for="Instructions" class="form-control"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Kaydet</button>
+    <a asp-action="PatientDetails" asp-route-id="@Model.SelectedPatientId" class="btn btn-secondary ms-2">Geri Dön</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial"   />
+}

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PatientTrackingSite.Models;
 using PatientTrackingSite.ViewModels;
+using PatientTrackingSite.Enums;
 
 namespace PatientTrackingSite.Controllers
 {
@@ -39,8 +40,9 @@ namespace PatientTrackingSite.Controllers
                     LastName = model.LastName,
                     Email = model.Email,
                     TCNo = model.TCNo,
-                    PasswordHash = model.Password, // ileride hashlenecek
+                    PasswordHash = model.Password, // ileride hashlenebilir
                     Role = "Patient",
+                    Gender = model.Gender,
                     Phone = model.Phone,
                     BirthDate = model.BirthDate,
                     Address = model.Address
@@ -51,9 +53,11 @@ namespace PatientTrackingSite.Controllers
 
                 HttpContext.Session.SetInt32("UserId", user.Id);
                 HttpContext.Session.SetString("UserRole", user.Role);
-                HttpContext.Session.SetString("UserName", user.FirstName);
+                HttpContext.Session.SetString("UserName", user.FirstName); 
+                HttpContext.Session.SetString("UserLastName", user.LastName);
 
-                return RedirectToAction("Index", "PatientHome");
+
+                return RedirectToAction("Login", "Account");
             }
 
             return View(model);
@@ -94,7 +98,7 @@ namespace PatientTrackingSite.Controllers
     
                 if (user == null)
                 {
-                    ModelState.AddModelError("", "Geçersiz TC Kimlik No veya şifre.");
+                    ModelState.AddModelError("", "Invalid TC ID or Password.");
                     return View(model);
                 }
 
@@ -102,13 +106,13 @@ namespace PatientTrackingSite.Controllers
                 HttpContext.Session.SetInt32("UserId", user.Id);
                 HttpContext.Session.SetString("UserRole", user.Role);
                 HttpContext.Session.SetString("UserName", user.FirstName);
+                HttpContext.Session.SetString("UserLastName", user.LastName);
+
 
                 if (user.Role == "Patient")
                     return RedirectToAction("Index", "PatientHome");
                 else if (user.Role == "Doctor")
-                    return RedirectToAction("Index", "DoctorHome");
-                else
-                    return RedirectToAction("Index", "Home"); // admin veya bilinmeyen rol
+                    return RedirectToAction("Index", "Doctor");              
             }
 
             return View(model);

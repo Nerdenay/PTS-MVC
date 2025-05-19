@@ -1,5 +1,4 @@
-﻿
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="utf-8" />
@@ -71,13 +70,6 @@
             border-bottom: 1px solid #dee2e6;
         }
 
-        .search-box input {
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            background-color: #e9ecef;
-        }
-
         .sidebar.collapsed {
             width: 0;
             padding: 0;
@@ -135,7 +127,6 @@
             .toggle-btn:hover {
                 background-color: #2d4e7c;
             }
-
     </style>
 </head>
 
@@ -147,14 +138,12 @@
         </div>
 
         <!-- Doktor Menüsü -->
-        <a href=""><i class="fas fa-home me-2"></i> Ana Sayfa</a>
-        <a href=""><i class="fas fa-users me-2"></i> Hastalarım</a>
-        <a href=""><i class="fas fa-calendar-check me-2"></i> Randevular</a>
-        <a href="#"><i class="fas fa-vials me-2"></i> Tahlil Sonuçları</a>
-        <a href="#"><i class="fas fa-stethoscope me-2"></i> Muayene Notları</a>
-        <a href="#"><i class="fas fa-prescription me-2"></i> Reçete Yaz</a>
-        <a href="#"><i class="fas fa-notes-medical me-2"></i> Tanılar</a>
-        <a href="#"><i class="fas fa-file-medical me-2"></i> Raporlar</a>
+        <a href="/Doctor/Index"><i class="fas fa-home me-2"></i> Ana Sayfa</a>
+        <a href="/Doctor/MyPatients"><i class="fas fa-users me-2"></i> Hastalarım</a>
+        <a href="/Doctor/Appointments"><i class="fas fa-calendar-check me-2"></i> Randevular</a>
+        <a href="/Doctor/UploadMedicalFile"><i class="fas fa-vials me-2"></i> Tahlil Sonuçları</a>
+        <a href="/Doctor/CreatePrescription"><i class="fas fa-prescription me-2"></i> Reçete Yaz</a>
+        <a href="/Doctor/CreateDisease"><i class="fas fa-notes-medical me-2"></i> Tanılar</a>
     </div>
 
     <!-- Main Content -->
@@ -163,8 +152,13 @@
             <button class="btn btn-outline-primary toggle-btn">
                 <i class="fas fa-bars"></i>
             </button>
-            <div class="search-box">
-                <input type="text" placeholder="Hangi hastayı arıyorsunuz?" />
+
+            <div class="flex-grow-1 text-center">
+                <form asp-controller="Doctor" asp-action="SearchPatient" method="get" class="d-inline-block w-50">
+                    <input type="text" name="query"
+                           class="form-control form-control-sm rounded-pill px-4 shadow-sm"
+                           placeholder="🔍 Hangi hastayı arıyorsunuz?" />
+                </form>
             </div>
 
             <div class="d-flex align-items-center gap-2">
@@ -185,13 +179,13 @@
                         <i class="fas fa-user-circle"></i>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                        <li><a class="dropdown-item" href="/Account/Profile">Profilim</a></li>
-                        <li><a class="dropdown-item" href="/Account/Logout">Çıkış Yap</a></li>
+                        <li><a class="dropdown-item" href="/Profile/Profile">Profile</a></li>
+                        <li><a class="dropdown-item" href="/Account/Login">Log Out</a></li>
                     </ul>
                 </div>
 
                 <!-- Gece Modu -->
-                <button id="darkModeToggle" class="btn btn-light" title="Gece Modu">
+                <button id="darkModeToggle" class="btn btn-light" title="Dark Mode">
                     <i class="fas fa-moon"></i>
                 </button>
             </div>

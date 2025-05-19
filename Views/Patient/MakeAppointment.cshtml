@@ -1,0 +1,87 @@
+﻿@model PatientTrackingSite.ViewModels.AppointmentViewModel
+
+@{
+    ViewData["Title"] = "Make Appointment";
+    Layout = "_PatientLayout";
+}
+
+@section Styles {
+    <style>
+        .form-section {
+            max-width: 600px;
+            margin: auto;
+        }
+
+        .form-section .form-label {
+            font-weight: 600;
+        }
+
+        .form-section .form-control:focus {
+            box-shadow: none;
+            border-color: #0d6efd;
+        }
+    </style>
+}
+
+<h2 class="mb-4 text-center"><i class="fas fa-calendar-plus me-2"></i> Make an Appointment</h2>
+
+<div class="form-section">
+    <form asp-action="MakeAppointment" method="post">
+        <div class="mb-3">
+            <label for="specialization" class="form-label">Select Specialization</label>
+            <select id="specialization" class="form-select" asp-for="Specialization">
+                <option disabled selected value="">-- Choose a branch --</option>
+                @foreach (var branch in (SelectList)ViewBag.Specializations)
+                {
+                    <option value="@branch.Value">@branch.Text</option>
+                }
+            </select>
+            <span asp-validation-for="Specialization" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="DoctorId" class="form-label">Select Doctor</label>
+            <select asp-for="DoctorId" class="form-select" id="doctorDropdown">
+                <option disabled selected value="">-- Choose a doctor --</option>
+            </select>
+            <span asp-validation-for="DoctorId" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="AppointmentDate" class="form-label">Select Date</label>
+            <input asp-for="AppointmentDate" type="datetime-local" class="form-control" />
+            <span asp-validation-for="AppointmentDate" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Notes" class="form-label">Note (Optional)</label>
+            <textarea asp-for="Notes" class="form-control" rows="3"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Confirm Appointment</button>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#specialization').change(function () {
+                var specialization = $(this).val();
+
+                if (specialization) {
+                    $.get('/Patient/GetDoctorsBySpecialization', { specialization: specialization }, function (data) {
+                        var doctorDropdown = $('#doctorDropdown');
+                        doctorDropdown.empty();
+                        doctorDropdown.append('<option disabled selected value="">-- Choose a doctor --</option>');
+
+                        $.each(data, function (i, doctor) {
+                            doctorDropdown.append('<option value="' + doctor.id + '">' + doctor.fullName + '</option>');
+                        });
+                    });
+                }
+            });
+        });
+    </script>
+}

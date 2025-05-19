@@ -1,9 +1,10 @@
 ﻿@model PatientTrackingSite.ViewModels.LoginViewModel
 
 @{
-    ViewData["Title"] = "Giriş Yap";
+    ViewData["Title"] = "Login";
     Layout = null;
 }
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -73,24 +74,35 @@
         .toggle-password {
             cursor: pointer;
         }
+
+    
     </style>
 </head>
 <body>
     <div class="login-box">
         <img src="~/images/Logo.png" class="logo" alt="PTS Logo" />
-        <h4 class="mb-4">Hasta Takip Sistemine Giriş</h4>
+        <h4 class="mb-4">Login To PTS</h4>
 
         <form asp-action="Login" method="post">
+
+            @if (ViewData.ModelState.ContainsKey("") && ViewData.ModelState[""].Errors.Count > 0)
+            {
+                <div class="alert alert-danger p-2 mb-3 text-start" role="alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    @ViewData.ModelState[""].Errors[0].ErrorMessage
+                </div>
+            }
+
             <div class="mb-3 text-start">
-                <label asp-for="TCNo" class="form-label">TC Kimlik Numarası</label>
-                <input asp-for="TCNo" class="form-control" placeholder="11 haneli TC Kimlik No" />
+                <label asp-for="TCNo" class="form-label">TC ID</label>
+                <input asp-for="TCNo" class="form-control" placeholder="11 Digit TC ID" />
                 <span asp-validation-for="TCNo" class="text-danger"></span>
             </div>
 
             <div class="mb-3 text-start position-relative">
-                <label asp-for="Password" class="form-label">Şifre</label>
+                <label asp-for="Password" class="form-label">Password</label>
                 <div class="input-group">
-                    <input asp-for="Password" type="password" class="form-control" id="passwordInput" placeholder="Şifrenizi girin" />
+                    <input asp-for="Password" type="password" class="form-control" id="passwordInput" placeholder="Enter your password" />
                     <span class="input-group-text toggle-password" id="togglePassword">
                         <i class="fa fa-eye-slash"></i>
                     </span>
@@ -98,11 +110,11 @@
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
 
-            <button type="submit" class="btn btn-primary w-100">Giriş Yap</button>
+            <button type="submit" class="btn btn-primary w-100">Sign in</button>
         </form>
 
         <div class="form-footer">
-            <p>Henüz hesabınız yok mu? <a href="/Account/Register">Kayıt Ol</a></p>
+            <p>Don't you have an account yet ? <a href="/Account/Register">Sign up</a></p>
         </div>
     </div>
 

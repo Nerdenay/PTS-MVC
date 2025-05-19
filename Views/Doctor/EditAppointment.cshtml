@@ -1,0 +1,41 @@
+﻿@model PatientTrackingSite.Models.Appointment
+
+@{
+    ViewData["Title"] = "Randevu Güncelle";
+    Layout = "~/Views/Shared/_DoctorLayout.cshtml";
+}
+
+<h2 class="mb-4">Randevu Güncelle</h2>
+
+<form asp-action="EditAppointment" method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="mb-3">
+        <label asp-for="AppointmentDate" class="form-label">Tarih ve Saat</label>
+        <input asp-for="AppointmentDate" type="datetime-local" class="form-control" />
+        <span asp-validation-for="AppointmentDate" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Status" class="form-label">Durum</label>
+        <select asp-for="Status" class="form-select">
+            <option value="Scheduled">Bekliyor</option>
+            <option value="Completed">Tamamlandı</option>
+            <option value="Cancelled">İptal</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Notes" class="form-label">Notlar</label>
+        <textarea asp-for="Notes" class="form-control" rows="3"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-success">
+        <i class="fas fa-save"></i> Kaydet
+    </button>
+    <a asp-action="Appointments" class="btn btn-secondary">Geri Dön</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial"   />
+}

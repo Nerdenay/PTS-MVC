@@ -1,0 +1,130 @@
+﻿@model PatientTrackingSite.ViewModels.PatientDetailViewModel
+
+@{
+    ViewData["Title"] = "Hasta Detayları";
+    Layout = "~/Views/Shared/_DoctorLayout.cshtml";
+}
+
+<h2 class="mb-4">@Model.Patient.FirstName @Model.Patient.LastName - Detaylar</h2>
+
+<!-- Temel Bilgiler -->
+<div class="mb-4">
+    <h5>Temel Bilgiler</h5>
+    <ul class="list-group">
+        <li class="list-group-item"><strong>Email:</strong> @Model.Patient.Email</li>
+        <li class="list-group-item"><strong>Telefon:</strong> @Model.Patient.Phone</li>
+        <li class="list-group-item"><strong>Doğum Tarihi:</strong> @Model.Patient.BirthDate?.ToString("dd.MM.yyyy")</li>
+        <li class="list-group-item"><strong>Adres:</strong> @Model.Patient.Address</li>
+        <li class="list-group-item"><strong>Toplam Randevu Sayısı:</strong> @Model.AppointmentCount</li>
+    </ul>
+</div>
+
+<!-- Hastalıklar -->
+@if (Model.Diseases.Any())
+{
+    <div class="mb-4">
+        <h5>Tanılar (Hastalıklar)</h5>
+        <table class="table table-sm table-bordered align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>İsim</th>
+                    <th>Açıklama</th>
+                    <th style="width: 100px;">İşlem</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var d in Model.Diseases)
+                {
+                    <tr>
+                        <td>@d.Name</td>
+                        <td>@d.Description</td>
+                        <td>
+                            <a href="/Doctor/EditDisease/@d.Id" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-edit"></i> Düzenle
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-info">Hasta ile ilgili hastalık bilgisi bulunmamaktadır.</div>
+}
+
+
+
+<!-- İlaçlar -->
+@if (Model.Medications.Any())
+{
+    <div class="mb-4">
+        <h5>Yazılan İlaçlar</h5>
+        <table class="table table-sm table-bordered align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>İsim</th>
+                    <th>Dozaj</th>
+                    <th>Kullanım Talimatı</th>
+                    <th style="width: 100px;">İşlem</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var m in Model.Medications)
+                {
+                    <tr>
+                        <td>@m.Name</td>
+                        <td>@m.Dosage</td>
+                        <td>@m.Instructions</td>
+                        <td>
+                            <a href="/Doctor/EditPrescription/@m.Id" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-edit"></i> Düzenle
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-info">Hasta ile ilgili ilaç bilgisi bulunmamaktadır.</div>
+}
+
+
+
+<!-- Yüklenen Görüntüler -->
+@if (Model.MedicalImages.Any())
+{
+    <div class="mb-4">
+        <h5>Yüklenen Röntgen/Görüntüler</h5>
+        <div class="d-flex flex-wrap gap-3">
+            @foreach (var image in Model.MedicalImages)
+            {
+                <div class="card shadow-sm" style="width: 180px;">
+                    <a href="@image.ImagePath" target="_blank">
+                        @if (image.ImagePath.EndsWith(".pdf"))
+                        {
+                            <img src="~/images/png-icon.png" class="card-img-top p-3" style="height: 120px; object-fit: contain;" alt="PDF" />
+                        }
+                        else
+                        {
+                            <img src="@image.ImagePath" class="card-img-top" style="height: 120px; object-fit: cover;" alt="Röntgen" />
+                        }
+                    </a>
+
+                    <div class="card-body p-2">
+                        <p class="card-text text-truncate">@image.Description</p>
+                        <small class="text-muted">Yüklenme: @image.UploadedAt.ToShortDateString()</small>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-info">Hasta ile ilgili yüklenmiş görüntü bulunmamaktadır.</div>
+}

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using PatientTrackingSite.Enums;
 
 
 namespace PatientTrackingSite.Models
@@ -39,6 +40,10 @@ namespace PatientTrackingSite.Models
         [Required]
         [StringLength(11, MinimumLength = 11, ErrorMessage = "TC No should be 11 character.")]
         public string TCNo { get; set; }
+
+        [Required]
+        public GenderType Gender { get; set; }
+
 
         // Navigation
         public ICollection<Appointment> AppointmentsAsPatient { get; set; }

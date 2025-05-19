@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
+using PatientTrackingSite.Enums;
 
 
 namespace PatientTrackingSite.ViewModels
@@ -34,6 +35,9 @@ namespace PatientTrackingSite.ViewModels
         public DateTime? BirthDate { get; set; }
 
         public string Address { get; set; }
+
+        [Required]
+        public GenderType Gender { get; set; }
 
     }
 }

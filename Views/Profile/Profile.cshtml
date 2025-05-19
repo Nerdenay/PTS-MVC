@@ -1,0 +1,168 @@
+﻿@model PatientTrackingSite.ViewModels.DoctorProfileViewModel
+@{
+    ViewData["Title"] = "Profil Güncelle";
+    Layout = "~/Views/Shared/_DoctorLayout.cshtml";
+}
+
+<style>
+    .profile-top {
+        text-align: center;
+        margin-top: 30px;
+        margin-bottom: 40px;
+    }
+
+    .profile-img {
+        width: 140px;
+        height: 140px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 4px solid #1111;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+
+    .form-section {
+        max-width: 960px;
+        margin: auto;
+        padding: 0 20px 50px 20px;
+    }
+
+        .form-section h4 {
+            font-weight: 600;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+        }
+
+    .form-label {
+        font-weight: 500;
+        color: #333;
+    }
+
+    .form-control {
+        border-radius: 6px;
+        border: 1px solid #ccc;
+    }
+
+        .form-control:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        }
+
+    .btn-update {
+        background-color: #0d6efd;
+        color: white;
+        font-weight: 500;
+        border-radius: 30px;
+        padding: 12px 35px;
+        transition: 0.2s;
+    }
+
+        .btn-update:hover {
+            background-color: #0b5ed7;
+        }
+</style>
+
+<div class="form-section">
+    <form asp-action="Profile" method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="Id" />
+
+        <div class="text-center mb-4">
+            @if (!string.IsNullOrEmpty(Model.ProfileImagePath))
+            {
+                <img src="@Model.ProfileImagePath" class="profile-img mb-2" alt="Profil Resmi" />
+            }
+            else
+            {
+                <img src="~/images/default-profile.png" class="profile-img mb-2" alt="Profil Resmi" />
+            }
+
+            <div class="d-flex justify-content-center" style="max-width: 300px; margin:auto;">
+                <input asp-for="ProfileImageFile" type="file" class="form-control form-control-sm" />
+            </div>
+            <span class="text-danger" asp-validation-for="ProfileImageFile"></span>
+        </div>
+
+        <h4 class="text-center mb-4">Kişisel Bilgiler</h4>
+
+        <div class="row g-4">
+            <div class="col-md-6">
+                <label asp-for="FirstName" class="form-label">Ad</label>
+                <input asp-for="FirstName" class="form-control" />
+                <span class="text-danger" asp-validation-for="FirstName"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="LastName" class="form-label">Soyad</label>
+                <input asp-for="LastName" class="form-control" />
+                <span class="text-danger" asp-validation-for="LastName"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="Specialization" class="form-label">Uzmanlık Alanı</label>
+                <input asp-for="Specialization" class="form-control" readonly />
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="Email" class="form-label">E-posta</label>
+                <input asp-for="Email" class="form-control" />
+                <span class="text-danger" asp-validation-for="Email"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="Phone" class="form-label">Telefon</label>
+                <input asp-for="Phone" class="form-control" />
+                <span class="text-danger" asp-validation-for="Phone"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="BirthDate" class="form-label">Doğum Tarihi</label>
+                <input asp-for="BirthDate" type="date" class="form-control" />
+                <span class="text-danger" asp-validation-for="BirthDate"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="TCNo" class="form-label">T.C. No</label>
+                <input asp-for="TCNo" class="form-control" />
+                <span class="text-danger" asp-validation-for="TCNo"></span>
+            </div>
+
+            <div class="col-12">
+                <label asp-for="Address" class="form-label">Adres</label>
+                <input asp-for="Address" class="form-control" />
+                <span class="text-danger" asp-validation-for="Address"></span>
+            </div>
+        </div>
+
+        <h4 class="text-center mt-5 mb-4">Şifre Güncelleme</h4>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <label asp-for="CurrentPassword" class="form-label">Mevcut Şifre</label>
+                <input asp-for="CurrentPassword" type="password" class="form-control" />
+                <span class="text-danger" asp-validation-for="CurrentPassword"></span>
+            </div>
+
+            <div class="col-md-4">
+                <label asp-for="NewPassword" class="form-label">Yeni Şifre</label>
+                <input asp-for="NewPassword" type="password" class="form-control" />
+                <span class="text-danger" asp-validation-for="NewPassword"></span>
+            </div>
+
+            <div class="col-md-4">
+                <label asp-for="ConfirmPassword" class="form-label">Yeni Şifre (Tekrar)</label>
+                <input asp-for="ConfirmPassword" type="password" class="form-control" />
+                <span class="text-danger" asp-validation-for="ConfirmPassword"></span>
+            </div>
+        </div>
+
+        <div class="text-center mt-5">
+            <button type="submit" class="btn btn-update">Profili Güncelle</button>
+        </div>
+    </form>
+</div>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial"   />
+}

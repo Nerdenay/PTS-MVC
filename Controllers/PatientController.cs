@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PatientTrackingSite.Models;
+using PatientTrackingSite.ViewModels;
 
 namespace PatientTrackingSite.Controllers
 {
@@ -60,5 +62,70 @@ namespace PatientTrackingSite.Controllers
 
             return View(images);
         }
+
+
+        // Appointments -------------------------------------------------------------------------------------
+
+        public IActionResult MakeAppointment()
+        {
+            // Tüm doktorlardan branşları al ve tekilleştir
+            var specializations = _context.Users
+                .Where(u => u.Role == "Doctor" && u.Specialization != null)
+                .Select(u => u.Specialization)
+                .Distinct()
+                .ToList();
+
+            ViewBag.Specializations = new SelectList(specializations);
+
+            return View();
+        }
+
+        [HttpGet]
+        public JsonResult GetDoctorsBySpecialization(string specialization)
+        {
+            var doctors = _context.Users
+                .Where(u => u.Role == "Doctor" && u.Specialization.ToLower() == specialization.ToLower())
+                .Select(u => new {
+                    u.Id,
+                    FullName = u.FirstName + " " + u.LastName
+                })
+                .ToList();
+
+            return Json(doctors);
+        }
+
+        [HttpPost]
+        public IActionResult MakeAppointment(AppointmentViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var specializations = _context.Users
+                .Where(u => u.Role == "Doctor" && u.Specialization != null)
+                .Select(u => u.Specialization)
+                 .Distinct()
+                 .ToList();
+                ViewBag.Specializations = new SelectList(specializations);
+                return View(model);
+            }
+
+            var patientId = HttpContext.Session.GetInt32("UserId");
+            if (patientId == null)
+                return RedirectToAction("Login", "Account");
+
+            var appointment = new Appointment
+            {
+                PatientId = patientId.Value,
+                DoctorId = model.DoctorId,
+                AppointmentDate = model.AppointmentDate,
+                Notes = model.Notes,
+                Status = "Scheduled"
+            };
+
+            _context.Appointments.Add(appointment);
+            _context.SaveChanges();
+
+            return RedirectToAction("Appointments", "Patient");
+        }
+
     }
 }
