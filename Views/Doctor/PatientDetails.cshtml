@@ -1,35 +1,35 @@
 ﻿@model PatientTrackingSite.ViewModels.PatientDetailViewModel
 
 @{
-    ViewData["Title"] = "Hasta Detayları";
+    ViewData["Title"] = "Patient Details";
     Layout = "~/Views/Shared/_DoctorLayout.cshtml";
 }
 
-<h2 class="mb-4">@Model.Patient.FirstName @Model.Patient.LastName - Detaylar</h2>
+<h2 class="mb-4">@Model.Patient.FirstName @Model.Patient.LastName - Details</h2>
 
-<!-- Temel Bilgiler -->
+<!-- Basic Information -->
 <div class="mb-4">
-    <h5>Temel Bilgiler</h5>
+    <h5>Basic Information</h5>
     <ul class="list-group">
         <li class="list-group-item"><strong>Email:</strong> @Model.Patient.Email</li>
-        <li class="list-group-item"><strong>Telefon:</strong> @Model.Patient.Phone</li>
-        <li class="list-group-item"><strong>Doğum Tarihi:</strong> @Model.Patient.BirthDate?.ToString("dd.MM.yyyy")</li>
-        <li class="list-group-item"><strong>Adres:</strong> @Model.Patient.Address</li>
-        <li class="list-group-item"><strong>Toplam Randevu Sayısı:</strong> @Model.AppointmentCount</li>
+        <li class="list-group-item"><strong>Phone:</strong> @Model.Patient.Phone</li>
+        <li class="list-group-item"><strong>Date of Birth:</strong> @Model.Patient.BirthDate?.ToString("dd.MM.yyyy")</li>
+        <li class="list-group-item"><strong>Address:</strong> @Model.Patient.Address</li>
+        <li class="list-group-item"><strong>Total Appointments:</strong> @Model.AppointmentCount</li>
     </ul>
 </div>
 
-<!-- Hastalıklar -->
+<!-- Diagnoses -->
 @if (Model.Diseases.Any())
 {
     <div class="mb-4">
-        <h5>Tanılar (Hastalıklar)</h5>
+        <h5>Diagnoses (Diseases)</h5>
         <table class="table table-sm table-bordered align-middle">
             <thead class="table-light">
                 <tr>
-                    <th>İsim</th>
-                    <th>Açıklama</th>
-                    <th style="width: 100px;">İşlem</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th style="width: 100px;">Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -40,7 +40,7 @@
                         <td>@d.Description</td>
                         <td>
                             <a href="/Doctor/EditDisease/@d.Id" class="btn btn-sm btn-outline-primary">
-                                <i class="fas fa-edit"></i> Düzenle
+                                <i class="fas fa-edit"></i> Edit
                             </a>
                         </td>
                     </tr>
@@ -51,23 +51,21 @@
 }
 else
 {
-    <div class="alert alert-info">Hasta ile ilgili hastalık bilgisi bulunmamaktadır.</div>
+    <div class="alert alert-info">No disease information found for this patient.</div>
 }
 
-
-
-<!-- İlaçlar -->
+<!-- Medications -->
 @if (Model.Medications.Any())
 {
     <div class="mb-4">
-        <h5>Yazılan İlaçlar</h5>
+        <h5>Prescribed Medications</h5>
         <table class="table table-sm table-bordered align-middle">
             <thead class="table-light">
                 <tr>
-                    <th>İsim</th>
-                    <th>Dozaj</th>
-                    <th>Kullanım Talimatı</th>
-                    <th style="width: 100px;">İşlem</th>
+                    <th>Name</th>
+                    <th>Dosage</th>
+                    <th>Usage Instructions</th>
+                    <th style="width: 100px;">Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -79,7 +77,7 @@ else
                         <td>@m.Instructions</td>
                         <td>
                             <a href="/Doctor/EditPrescription/@m.Id" class="btn btn-sm btn-outline-primary">
-                                <i class="fas fa-edit"></i> Düzenle
+                                <i class="fas fa-edit"></i> Edit
                             </a>
                         </td>
                     </tr>
@@ -90,16 +88,14 @@ else
 }
 else
 {
-    <div class="alert alert-info">Hasta ile ilgili ilaç bilgisi bulunmamaktadır.</div>
+    <div class="alert alert-info">No medication information found for this patient.</div>
 }
 
-
-
-<!-- Yüklenen Görüntüler -->
+<!-- Uploaded Medical Files -->
 @if (Model.MedicalImages.Any())
 {
     <div class="mb-4">
-        <h5>Yüklenen Röntgen/Görüntüler</h5>
+        <h5>Uploaded X-rays / Medical Files</h5>
         <div class="d-flex flex-wrap gap-3">
             @foreach (var image in Model.MedicalImages)
             {
@@ -111,13 +107,13 @@ else
                         }
                         else
                         {
-                            <img src="@image.ImagePath" class="card-img-top" style="height: 120px; object-fit: cover;" alt="Röntgen" />
+                            <img src="@image.ImagePath" class="card-img-top" style="height: 120px; object-fit: cover;" alt="X-ray" />
                         }
                     </a>
 
                     <div class="card-body p-2">
                         <p class="card-text text-truncate">@image.Description</p>
-                        <small class="text-muted">Yüklenme: @image.UploadedAt.ToShortDateString()</small>
+                        <small class="text-muted">Uploaded: @image.UploadedAt.ToShortDateString()</small>
                     </div>
                 </div>
             }
@@ -126,5 +122,5 @@ else
 }
 else
 {
-    <div class="alert alert-info">Hasta ile ilgili yüklenmiş görüntü bulunmamaktadır.</div>
+    <div class="alert alert-info">No uploaded files found for this patient.</div>
 }

@@ -1,40 +1,40 @@
 ﻿@model PatientTrackingSite.ViewModels.PrescriptionViewModel
 
 @{
-    ViewData["Title"] = "Reçete Düzenle";
+    ViewData["Title"] = "Edit Prescription";
     Layout = "~/Views/Shared/_DoctorLayout.cshtml";
 }
 
-<h2 class="mb-4">Reçete Düzenle</h2>
+<h2 class="mb-4">Edit Prescription</h2>
 
 <form asp-action="EditPrescription" method="post" class="bg-white p-4 shadow rounded">
     <input type="hidden" asp-for="SelectedPatientId" />
 
     <div class="mb-3">
-        <label asp-for="SelectedPatientId" class="form-label">Hasta</label>
+        <label asp-for="SelectedPatientId" class="form-label">Patient</label>
         <select asp-for="SelectedPatientId" asp-items="Model.PatientList" class="form-select" disabled></select>
     </div>
 
     <div class="mb-3">
-        <label asp-for="MedicationName" class="form-label">İlaç Adı</label>
+        <label asp-for="MedicationName" class="form-label">Medication Name</label>
         <input asp-for="MedicationName" class="form-control" />
         <span asp-validation-for="MedicationName" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
-        <label asp-for="Dosage" class="form-label">Dozaj</label>
+        <label asp-for="Dosage" class="form-label">Dosage</label>
         <input asp-for="Dosage" class="form-control" />
     </div>
 
     <div class="mb-3">
-        <label asp-for="Instructions" class="form-label">Kullanım Talimatı</label>
+        <label asp-for="Instructions" class="form-label">Usage Instructions</label>
         <textarea asp-for="Instructions" class="form-control"></textarea>
     </div>
 
-    <button type="submit" class="btn btn-primary">Kaydet</button>
-    <a asp-action="PatientDetails" asp-route-id="@Model.SelectedPatientId" class="btn btn-secondary ms-2">Geri Dön</a>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="PatientDetails" asp-route-id="@Model.SelectedPatientId" class="btn btn-secondary ms-2">Go Back</a>
 </form>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial"   />
+    <partial name="_ValidationScriptsPartial" />
 }
