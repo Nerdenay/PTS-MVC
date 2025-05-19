@@ -27,9 +27,9 @@ namespace PatientTrackingSite.ViewModels
         public string Phone { get; set; }
 
 
-        [Required(ErrorMessage = "TC Kimlik Numarası zorunludur.")]
-        [StringLength(11, MinimumLength = 11, ErrorMessage = "TC Kimlik Numarası 11 haneli olmalıdır.")]
-        [Remote("IsTCNoAvailable", "Account", ErrorMessage = "Bu TC numarası zaten sistemde kayıtlı.")]
+        [Required(ErrorMessage = "TC ID number is required.")]
+        [StringLength(11, MinimumLength = 11, ErrorMessage = "TC ID number must be 11 digits long.")]
+        [Remote("IsTCNoAvailable", "Account", ErrorMessage = "This ID number is already registered in the system.")]
         public string TCNo { get; set; }
 
         public DateTime? BirthDate { get; set; }

@@ -104,7 +104,7 @@ namespace PatientTrackingSite.Controllers
             {
                 if (user.PasswordHash != model.CurrentPassword) // NOT: hash kontrolü eklenmeli
                 {
-                    ModelState.AddModelError("CurrentPassword", "Mevcut şifre hatalı.");
+                    ModelState.AddModelError("CurrentPassword", "Incorrect current password.");
                     return View(model);
                 }
 
@@ -115,7 +115,7 @@ namespace PatientTrackingSite.Controllers
 
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = "Profil başarıyla güncellendi.";
+            TempData["Success"] = "Profile updated successfully.";
             return RedirectToAction("Profile");
         }
     }
