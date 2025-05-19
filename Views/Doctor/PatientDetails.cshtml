@@ -99,16 +99,17 @@ else
         <div class="d-flex flex-wrap gap-3">
             @foreach (var image in Model.MedicalImages)
             {
-                <div class="card shadow-sm" style="width: 180px;">
-                    <a href="@image.ImagePath" target="_blank">
-                        @if (image.ImagePath.EndsWith(".pdf"))
+                <div class="card shadow-sm" style="width: 180px; height: 220px;">
+                    <a href="@image.ImagePath" target="_blank class="d-block text-center mt-2">
+                        @* @if (image.ImagePath.EndsWith(".pdf"))
                         {
                             <img src="~/images/png-icon.png" class="card-img-top p-3" style="height: 120px; object-fit: contain;" alt="PDF" />
                         }
                         else
                         {
                             <img src="@image.ImagePath" class="card-img-top" style="height: 120px; object-fit: cover;" alt="X-ray" />
-                        }
+                        } (TAG HELPERSIZ)*@
+                        <file-icon path="@image.ImagePath" alt="Medical File" />
                     </a>
 
                     <div class="card-body p-2">

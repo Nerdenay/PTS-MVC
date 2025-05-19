@@ -34,7 +34,7 @@
                             <td>@item.AppointmentDate.ToString("HH:mm")</td>
                             <td>@item.Patient.FirstName @item.Patient.LastName</td>
                             <td>
-                                @if (item.Status == "Scheduled")
+                                @* @if (item.Status == "Scheduled")
                                 {
                                     <span class="badge bg-warning text-dark">Pending</span>
                                 }
@@ -45,7 +45,8 @@
                                 else
                                 {
                                     <span class="badge bg-danger">Cancelled</span>
-                                }
+                                } (TAG HELPERSIZ HALİ)*@
+                                <status-label status="@item.Status"></status-label>
                             </td>
                             <td>@item.Notes</td>
                             <td class="text-end">
