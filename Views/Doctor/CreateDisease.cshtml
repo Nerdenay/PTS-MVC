@@ -1,33 +1,33 @@
 ﻿@model PatientTrackingSite.ViewModels.DiseaseCreateViewModel
 
 @{
-    ViewData["Title"] = "Hastalık Ekle";
+    ViewData["Title"] = "Add Disease";
     Layout = "~/Views/Shared/_DoctorLayout.cshtml";
 }
 
-<h2 class="mb-4">Hastalık Ekle</h2>
+<h2 class="mb-4">Add Disease</h2>
 
 <form asp-action="CreateDisease" method="post" class="bg-white p-4 shadow rounded">
     <div class="mb-3">
-        <label asp-for="SelectedPatientId" class="form-label">Hasta</label>
+        <label asp-for="SelectedPatientId" class="form-label">Patient</label>
         <select asp-for="SelectedPatientId" class="form-select" asp-items="Model.PatientList">
-            <option value="">-- Hasta Seçiniz --</option>
+            <option value="">-- Select Patient --</option>
         </select>
         <span asp-validation-for="SelectedPatientId" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
-        <label asp-for="Name" class="form-label">Hastalık Adı</label>
+        <label asp-for="Name" class="form-label">Disease Name</label>
         <input asp-for="Name" class="form-control" />
         <span asp-validation-for="Name" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
-        <label asp-for="Description" class="form-label">Açıklama</label>
+        <label asp-for="Description" class="form-label">Description</label>
         <textarea asp-for="Description" class="form-control"></textarea>
     </div>
 
-    <button type="submit" class="btn btn-success">Kaydet</button>
+    <button type="submit" class="btn btn-success">Save</button>
 </form>
 
 @section Scripts {

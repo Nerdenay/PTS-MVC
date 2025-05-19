@@ -1,14 +1,14 @@
 ﻿@model List<PatientTrackingSite.Models.Appointment>
 
 @{
-    ViewData["Title"] = "Randevu Takvimi";
+    ViewData["Title"] = "Appointment Schedule";
     Layout = "~/Views/Shared/_DoctorLayout.cshtml";
     var grouped = Model
         .OrderBy(a => a.AppointmentDate)
         .GroupBy(a => a.AppointmentDate.Date);
 }
 
-<h2 class="mb-4">Randevu Takvimi</h2>
+<h2 class="mb-4">Appointment Schedule</h2>
 
 @if (Model != null && Model.Any())
 {
@@ -20,11 +20,11 @@
             <table class="table table-bordered table-sm bg-white">
                 <thead class="table-light">
                     <tr>
-                        <th>Saat</th>
-                        <th>Hasta</th>
-                        <th>Durum</th>
-                        <th>Notlar</th>
-                        <th class="text-end">İşlemler</th>
+                        <th>Time</th>
+                        <th>Patient</th>
+                        <th>Status</th>
+                        <th>Notes</th>
+                        <th class="text-end">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -36,23 +36,23 @@
                             <td>
                                 @if (item.Status == "Scheduled")
                                 {
-                                    <span class="badge bg-warning text-dark">Bekliyor</span>
+                                    <span class="badge bg-warning text-dark">Pending</span>
                                 }
                                 else if (item.Status == "Completed")
                                 {
-                                    <span class="badge bg-success">Tamamlandı</span>
+                                    <span class="badge bg-success">Completed</span>
                                 }
                                 else
                                 {
-                                    <span class="badge bg-danger">İptal</span>
+                                    <span class="badge bg-danger">Cancelled</span>
                                 }
                             </td>
                             <td>@item.Notes</td>
                             <td class="text-end">
                                 <a href="/Doctor/EditAppointment/@item.Id" class="btn btn-sm btn-outline-primary me-2">
-                                    <i class="fas fa-edit"></i> Güncelle
+                                    <i class="fas fa-edit"></i> Update
                                 </a>
-                                <form asp-action="DeleteAppointment" asp-route-id="@item.Id" method="post" class="d-inline" onsubmit="return confirm('Silmek istediğinize emin misiniz?');">
+                                <form asp-action="DeleteAppointment" asp-route-id="@item.Id" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete?');">
                                     <button type="submit" class="btn btn-sm btn-outline-danger">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
@@ -67,5 +67,5 @@
 }
 else
 {
-    <div class="alert alert-info">Henüz bir randevu kaydı yok.</div>
+    <div class="alert alert-info">There are no appointment records yet.</div>
 }

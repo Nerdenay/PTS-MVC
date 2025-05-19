@@ -7,10 +7,10 @@ namespace PatientTrackingSite.ViewModels
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Hasta seçimi zorunludur.")]
+        [Required(ErrorMessage = "Patient selection is required.")]
         public int SelectedPatientId { get; set; }
 
-        [Required(ErrorMessage = "Hastalık adı zorunludur.")]
+        [Required(ErrorMessage = "Disease name is required.")]
         public string Name { get; set; }
 
         public string Description { get; set; }

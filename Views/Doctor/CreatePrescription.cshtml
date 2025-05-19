@@ -1,40 +1,40 @@
 ﻿@model PatientTrackingSite.ViewModels.PrescriptionViewModel
 
 @{
-    ViewData["Title"] = "Reçete Yaz";
+    ViewData["Title"] = "Write Prescription";
     Layout = "~/Views/Shared/_DoctorLayout.cshtml";
 }
 
-<h2 class="mb-4">Reçete Yaz</h2>
+<h2 class="mb-4">Write Prescription</h2>
 
 <form asp-action="CreatePrescription" method="post" class="bg-white p-4 shadow rounded">
     <div class="mb-3">
-        <label asp-for="SelectedPatientId" class="form-label">Hasta</label>
+        <label asp-for="SelectedPatientId" class="form-label">Patient</label>
         <select asp-for="SelectedPatientId" class="form-select" asp-items="Model.PatientList">
-            <option value="">Hasta seçiniz</option>
+            <option value="">-- Select Patient --</option>
         </select>
         <span asp-validation-for="SelectedPatientId" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
-        <label asp-for="MedicationName" class="form-label">İlaç Adı</label>
+        <label asp-for="MedicationName" class="form-label">Medication Name</label>
         <input asp-for="MedicationName" class="form-control" />
         <span asp-validation-for="MedicationName" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
-        <label asp-for="Dosage" class="form-label">Dozaj</label>
+        <label asp-for="Dosage" class="form-label">Dosage</label>
         <input asp-for="Dosage" class="form-control" />
         <span asp-validation-for="Dosage" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
-        <label asp-for="Instructions" class="form-label">Kullanım Talimatı</label>
+        <label asp-for="Instructions" class="form-label">Usage Instructions</label>
         <textarea asp-for="Instructions" class="form-control"></textarea>
         <span asp-validation-for="Instructions" class="text-danger"></span>
     </div>
 
-    <button type="submit" class="btn btn-success">Kaydet</button>
+    <button type="submit" class="btn btn-success">Save</button>
 </form>
 
 @section Scripts {

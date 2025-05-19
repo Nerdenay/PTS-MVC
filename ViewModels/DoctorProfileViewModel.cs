@@ -24,7 +24,7 @@ namespace PatientTrackingSite.ViewModels
 
         public string Address { get; set; }
 
-        [Display(Name = "Uzmanlık Alanı")]
+        [Display(Name = "Specialization")]
         [StringLength(100)]
         public string? Specialization { get; set; }
 
@@ -39,7 +39,7 @@ namespace PatientTrackingSite.ViewModels
         [MinLength(6)]
         public string NewPassword { get; set; }
 
-        [Compare("NewPassword", ErrorMessage = "Şifreler uyuşmuyor.")]
+        [Compare("NewPassword", ErrorMessage = "Passwords do not match.")]
         public string ConfirmPassword { get; set; }
     }
 }
