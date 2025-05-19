@@ -34,11 +34,18 @@
             width: 100%;
         }
 
+        .logo {
+            display: block;
+            margin: 0 auto 1rem auto;
+            max-width: 100px;
+            height: auto;
+        }
+
         .form-title {
             text-align: center;
-            font-weight: 600;
+            font-weight: 800;
             margin-bottom: 1.5rem;
-            color: #dc3545;
+            color: #bd2130;
         }
 
         .btn-primary {
@@ -72,6 +79,9 @@
 </head>
 <body>
     <div class="register-box">
+
+        <img src="~/images/Logo.png" class="logo" alt="PTS Logo" />
+
         <h4 class="form-title">Patient Registration</h4>
 
         <form asp-action="Register" method="post">

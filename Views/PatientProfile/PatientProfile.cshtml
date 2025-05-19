@@ -1,7 +1,7 @@
-﻿@model PatientTrackingSite.ViewModels.DoctorProfileViewModel
+﻿@model PatientTrackingSite.ViewModels.PatientProfileViewModel
 @{
     ViewData["Title"] = "Update Profile";
-    Layout = "~/Views/Shared/_DoctorLayout.cshtml";
+    Layout = "~/Views/Shared/_PatientLayout.cshtml";
 }
 
 <style>
@@ -64,100 +64,125 @@
 </style>
 
 <div class="form-section">
-    <form asp-action="Profile" method="post" enctype="multipart/form-data">
+
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+            <i class="fas fa-check-circle me-2"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <form asp-action="PatientProfile" asp-controller="PatientProfile" method="post" enctype="multipart/form-data">
+
         <input type="hidden" asp-for="Id" />
 
         <div class="text-center mb-4">
+
             @if (!string.IsNullOrEmpty(Model.ProfileImagePath))
             {
-                <img src="@Model.ProfileImagePath" class="profile-img mb-2" alt="Profile Pic" />
+                <img src="@Model.ProfileImagePath" class="profile-img mb-2" alt="Profile Picture" />
             }
             else
             {
-                <img src="~/images/doctors/default.jpg" class="profile-img mb-2" alt="Profile Pic" />
+                var genderImage = Model.Gender == PatientTrackingSite.Enums.GenderType.Female
+                ? Url.Content("~/images/default-female.png")
+                : Url.Content("~/images/default-male.png");
+
+                <img src="@genderImage" class="profile-img mb-2" alt="Profil Resmi" />
             }
 
             <div class="d-flex justify-content-center" style="max-width: 300px; margin:auto;">
                 <input asp-for="ProfileImageFile" type="file" class="form-control form-control-sm" />
             </div>
+
             <span class="text-danger" asp-validation-for="ProfileImageFile"></span>
+
         </div>
 
         <h4 class="text-center mb-4">Personel Info</h4>
 
         <div class="row g-4">
             <div class="col-md-6">
-                <label asp-for="FirstName" class="form-label">Ad</label>
+                <label asp-for="FirstName" class="form-label">Name</label>
                 <input asp-for="FirstName" class="form-control" />
                 <span class="text-danger" asp-validation-for="FirstName"></span>
             </div>
 
             <div class="col-md-6">
-                <label asp-for="LastName" class="form-label">Soyad</label>
+                <label asp-for="LastName" class="form-label">Surname</label>
                 <input asp-for="LastName" class="form-control" />
                 <span class="text-danger" asp-validation-for="LastName"></span>
             </div>
 
             <div class="col-md-6">
-                <label asp-for="Specialization" class="form-label">Uzmanlık Alanı</label>
-                <input asp-for="Specialization" class="form-control" readonly />
+                <label asp-for="TCNo" class="form-label">TC ID</label>
+                <input asp-for="TCNo" class="form-control" readonly />
             </div>
 
             <div class="col-md-6">
-                <label asp-for="Email" class="form-label">E-posta</label>
+                <label class="form-label">Gender</label>
+                <input type="text" class="form-control" value="@Model.Gender" readonly />
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="Email" class="form-label">Mail</label>
                 <input asp-for="Email" class="form-control" />
                 <span class="text-danger" asp-validation-for="Email"></span>
             </div>
 
             <div class="col-md-6">
-                <label asp-for="Phone" class="form-label">Telefon</label>
+                <label asp-for="Phone" class="form-label">Phone</label>
                 <input asp-for="Phone" class="form-control" />
                 <span class="text-danger" asp-validation-for="Phone"></span>
             </div>
 
             <div class="col-md-6">
-                <label asp-for="BirthDate" class="form-label">Doğum Tarihi</label>
+                <label asp-for="BirthDate" class="form-label">Birth Date</label>
                 <input asp-for="BirthDate" type="date" class="form-control" />
                 <span class="text-danger" asp-validation-for="BirthDate"></span>
             </div>
-
-            <div class="col-md-6">
-                <label asp-for="TCNo" class="form-label">T.C. No</label>
-                <input asp-for="TCNo" class="form-control" />
-                <span class="text-danger" asp-validation-for="TCNo"></span>
-            </div>
-
+          
             <div class="col-12">
-                <label asp-for="Address" class="form-label">Adres</label>
+                <label asp-for="Address" class="form-label">Address</label>
                 <input asp-for="Address" class="form-control" />
                 <span class="text-danger" asp-validation-for="Address"></span>
             </div>
         </div>
 
-        <h4 class="text-center mt-5 mb-4">Şifre Güncelleme</h4>
+        <h4 class="text-center mt-5 mb-4">Update Password</h4>
 
         <div class="row g-4">
             <div class="col-md-4">
-                <label asp-for="CurrentPassword" class="form-label">Mevcut Şifre</label>
+                <label asp-for="CurrentPassword" class="form-label">Current Password</label>
                 <input asp-for="CurrentPassword" type="password" class="form-control" />
                 <span class="text-danger" asp-validation-for="CurrentPassword"></span>
             </div>
 
             <div class="col-md-4">
-                <label asp-for="NewPassword" class="form-label">Yeni Şifre</label>
+                <label asp-for="NewPassword" class="form-label">New Password</label>
                 <input asp-for="NewPassword" type="password" class="form-control" />
                 <span class="text-danger" asp-validation-for="NewPassword"></span>
             </div>
 
             <div class="col-md-4">
-                <label asp-for="ConfirmPassword" class="form-label">Yeni Şifre (Tekrar)</label>
+                <label asp-for="ConfirmPassword" class="form-label">New Password (Again)</label>
                 <input asp-for="ConfirmPassword" type="password" class="form-control" />
                 <span class="text-danger" asp-validation-for="ConfirmPassword"></span>
             </div>
         </div>
 
         <div class="text-center mt-5">
-            <button type="submit" class="btn btn-update">Profili Güncelle</button>
+            <button type="submit" class="btn btn-update">Profile has been updated</button>
         </div>
     </form>
 </div>

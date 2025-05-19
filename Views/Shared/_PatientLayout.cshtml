@@ -12,7 +12,9 @@
             font-family: 'Segoe UI', sans-serif;
             background-color: #f4f6f9;
             margin: 0;
+            min-height: 100vh; 
             display: flex;
+            flex-direction: column;
         }
 
         .sidebar {
@@ -56,8 +58,12 @@
             margin-left: 250px;
             width: calc(100% - 250px);
             transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
         }
 
+      
         .navbar {
             background-color: white;
             padding: 1rem;
@@ -91,34 +97,46 @@
 
         .dark-mode footer {
             background-color: #1c1c1c !important;
-            color: #ffffff;
+            color: #ffffff !important;
             border-top: 1px solid #444;
         }
 
             .dark-mode footer .text-muted {
-                color: #cccccc !important;
+                color: #ccc !important;
             }
-
 
         .dark-mode {
             background-color: #121212;
             color: #ffffff;
         }
 
+            .dark-mode .search-box input {
+                background-color: #333;
+                color: #fff;
+            }
             .dark-mode .card {
                 background-color: #1e1e1e;
                 color: #fff;
                 border: 1px solid #333;
             }
 
+            .dark-mode .form-control {
+                background-color: #2a2a2a;
+                color: #fff;
+                border-color: #555;
+            }
+
+            .dark-mode .sidebar a:hover {
+                background-color: #274063;
+            }
+
             .dark-mode .navbar {
-                background-color: #1c1c1c;
-                border-bottom: 1px solid #444;
+                background-color: #1a1a1a;
+                border-bottom: 1px solid #333;
             }
 
             .dark-mode .sidebar {
-                background-color: #101d30;
-            }
+                background-color: #111b2a;
 
 
         .toggle-btn {
@@ -139,13 +157,18 @@
 </head>
 
 <body>
+
     <!-- Sidebar -->
+
     <div class="sidebar">
 
         <div class="logo-container">
             <img src="~/images/Logo.png" class="logo-img" alt="Logo" />
         </div>
 
+        <a href="/Patient/Index">
+            <i class="fa-solid fa-house"></i> Homepage
+        </a>
         <a href="/Patient/Doctors">
             <i class="fas fa-user-md me-2"></i>Doctors
          </a>
@@ -156,10 +179,10 @@
             <i class="fa-solid fa-laptop-medical"></i> Results
         </a>     
         <a href="#">
-            <i class="fa-solid fa-disease me-2"></i>Hastalıklarım
+            <i class="fa-solid fa-disease me-2"></i>Disases
         </a>
         <a href="#">
-            <i class="fa-solid fa-calendar-days me-2"></i>Randevularım
+            <i class="fa-solid fa-calendar-days me-2"></i> My Applications
         </a>
 
     </div>
@@ -176,6 +199,7 @@
             </div>
 
             <div class="d-flex align-items-center gap-2">
+
                 <!-- Bildirimler -->
                 <div class="dropdown">
                     <button class="btn btn-light dropdown-toggle" type="button" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Notifications">
@@ -188,13 +212,14 @@
                 </div>
 
                 <!-- Profil -->
+
                 <div class="dropdown">
                     <button class="btn btn-light dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Profile">
                         <i class="fas fa-user-circle"></i>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                        <li><a class="dropdown-item" href="/Account/Profile">Profile</a></li>
-                        <li><a class="dropdown-item" href="/Account/Logout">Exit</a></li>
+                        <li><a class="dropdown-item" href="/PatientProfile/PatientProfile">Profile</a></li>
+                        <li><a class="dropdown-item" href="/Account/Login">Exit</a></li>
                     </ul>
                 </div>
 
@@ -211,19 +236,20 @@
             @RenderBody()
         </div>
 
-        <!-- FOOTER -->
 
-        <footer class="text-center py-3 bg-light border-top" style="font-size: 0.9rem;">
+           <!-- FOOTER --> 
+
+        <footer class="text-center py-3 bg-light border-top mt-auto" style="font-size: 0.9rem;">
             <div class="container">
                 <span class="text-muted">
-                    © 2025 Patient Tracking Site | Patient Panel | All rights reserved.
+                    &copy; 2025 Patient Tracking Site | Patient Panel
                 </span>
             </div>
         </footer>
-
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script>
         document.querySelector('.toggle-btn').addEventListener('click', function () {
             document.querySelector('.sidebar').classList.toggle('collapsed');

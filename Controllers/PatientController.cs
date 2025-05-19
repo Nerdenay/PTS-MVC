@@ -16,6 +16,21 @@ namespace PatientTrackingSite.Controllers
         }
 
 
+        //Homepage ------------------------------------------------------------------------------------------
+
+
+        public IActionResult Index()
+        {
+
+            int? patientId = HttpContext.Session.GetInt32("UserId");
+            if (patientId == null || HttpContext.Session.GetString("UserRole") != "Patient")
+                return RedirectToAction("Login", "Account");
+
+            return View();
+        }
+
+
+
         // Doctors ------------------------------------------------------------------------------------------
         public IActionResult Doctors()
         {
@@ -85,7 +100,8 @@ namespace PatientTrackingSite.Controllers
         {
             var doctors = _context.Users
                 .Where(u => u.Role == "Doctor" && u.Specialization.ToLower() == specialization.ToLower())
-                .Select(u => new {
+                .Select(u => new
+                {
                     u.Id,
                     FullName = u.FirstName + " " + u.LastName
                 })
@@ -126,6 +142,22 @@ namespace PatientTrackingSite.Controllers
 
             return RedirectToAction("Appointments", "Patient");
         }
+
+
+        // Diseases ------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+        // My Appointments ---------------------------------------------------------------------------------
+
+
+
+
 
     }
 }
