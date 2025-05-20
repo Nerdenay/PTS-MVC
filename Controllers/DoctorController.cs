@@ -197,16 +197,21 @@ namespace PatientTrackingSite.Controllers
         [HttpGet]
         public IActionResult CreatePrescription()
         {
+            int doctorId = HttpContext.Session.GetInt32("UserId") ?? 0;
+
+            var patients = _context.Appointments
+                .Where(a => a.DoctorId == doctorId)
+                .Select(a => a.Patient)
+                .Distinct()
+                .ToList();
+
             var model = new PrescriptionViewModel
             {
-                PatientList = _context.Users
-                    .Where(u => u.Role == "Patient")
-                    .Select(p => new SelectListItem
-                    {
-                        Value = p.Id.ToString(),
-                        Text = p.FirstName + " " + p.LastName
-                    })
-                    .ToList()
+                PatientList = patients.Select(p => new SelectListItem
+                {
+                    Value = p.Id.ToString(),
+                    Text = p.FirstName + " " + p.LastName
+                }).ToList()
             };
 
             return View(model);
@@ -215,23 +220,34 @@ namespace PatientTrackingSite.Controllers
         [HttpPost]
         public IActionResult CreatePrescription(PrescriptionViewModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                model.PatientList = _context.Users
-                    .Where(u => u.Role == "Patient")
-                    .Select(u => new SelectListItem
-                    {
-                        Value = u.Id.ToString(),
-                        Text = u.FirstName + " " + u.LastName
-                    }).ToList();
-
-                return View(model);
-            }
-
             var doctorId = HttpContext.Session.GetInt32("UserId");
 
             if (doctorId == null || HttpContext.Session.GetString("UserRole") != "Doctor")
                 return RedirectToAction("Login", "Account");
+
+            //Yetkisiz hasta kontrolü
+            bool isValidPatient = _context.Appointments.Any(a =>
+                a.DoctorId == doctorId && a.PatientId == model.SelectedPatientId);
+
+            if (!isValidPatient)
+                return Unauthorized();
+
+            if (!ModelState.IsValid)
+            {
+                var patients = _context.Appointments
+                    .Where(a => a.DoctorId == doctorId)
+                    .Select(a => a.Patient)
+                    .Distinct()
+                    .ToList();
+
+                model.PatientList = patients.Select(p => new SelectListItem
+                {
+                    Value = p.Id.ToString(),
+                    Text = p.FirstName + " " + p.LastName
+                }).ToList();
+
+                return View(model);
+            }
 
             var medication = new Medication
             {
@@ -253,8 +269,12 @@ namespace PatientTrackingSite.Controllers
         [HttpGet]
         public IActionResult EditPrescription(int id)
         {
-            var medication = _context.Medications.FirstOrDefault(m => m.Id == id);
-            if (medication == null) return NotFound();
+            int? doctorId = HttpContext.Session.GetInt32("UserId");
+            if (doctorId == null || HttpContext.Session.GetString("UserRole") != "Doctor")
+                return RedirectToAction("Login", "Account");
+
+            var medication = _context.Medications.FirstOrDefault(m => m.Id == id && m.DoctorId == doctorId);
+            if (medication == null) return Unauthorized();
 
             var model = new PrescriptionViewModel
             {
@@ -262,18 +282,19 @@ namespace PatientTrackingSite.Controllers
                 MedicationName = medication.Name,
                 Dosage = medication.Dosage,
                 Instructions = medication.Instructions,
-                // Hasta bilgisi değişmeyecek, ama formu doldurmak için lazım:
-                PatientList = _context.Users
-                    .Where(u => u.Role == "Patient")
-                    .Select(u => new SelectListItem
+                PatientList = new List<SelectListItem> // sadece gösterim için, seçim yapılmayacak
+                {
+                    new SelectListItem
                     {
-                        Value = u.Id.ToString(),
-                        Text = u.FirstName + " " + u.LastName
-                    }).ToList()
+                        Value = medication.PatientId.ToString(),
+                        Text = _context.Users.Where(u => u.Id == medication.PatientId).Select(u => u.FirstName + " " + u.LastName).FirstOrDefault()
+                    }
+                }
             };
 
             return View(model);
         }
+
 
         [HttpPost]
         public IActionResult EditPrescription(int id, PrescriptionViewModel model)
@@ -304,20 +325,27 @@ namespace PatientTrackingSite.Controllers
             return RedirectToAction("PatientDetails", new { id = medication.PatientId });
         }
 
+
         // UploadMedicalFile  ------------------------------------------------------------------------------------------------
 
         [HttpGet]
         public IActionResult UploadMedicalFile()
         {
+            int doctorId = HttpContext.Session.GetInt32("UserId") ?? 0;
+
+            var patients = _context.Appointments
+                .Where(a => a.DoctorId == doctorId)
+                .Select(a => a.Patient)
+                .Distinct()
+                .ToList();
+
             var model = new MedicalImageUploadViewModel
             {
-                PatientList = _context.Users
-                    .Where(u => u.Role == "Patient")
-                    .Select(p => new SelectListItem
-                    {
-                        Value = p.Id.ToString(),
-                        Text = p.FirstName + " " + p.LastName
-                    }).ToList()
+                PatientList = patients.Select(p => new SelectListItem
+                {
+                    Value = p.Id.ToString(),
+                    Text = p.FirstName + " " + p.LastName
+                }).ToList()
             };
 
             return View(model);
@@ -326,15 +354,27 @@ namespace PatientTrackingSite.Controllers
         [HttpPost]
         public async Task<IActionResult> UploadMedicalFile(MedicalImageUploadViewModel model)
         {
+            int doctorId = HttpContext.Session.GetInt32("UserId") ?? 0;
+
+            bool isValidPatient = _context.Appointments.Any(a =>
+                a.DoctorId == doctorId && a.PatientId == model.SelectedPatientId);
+
+            if (!isValidPatient)
+                return Unauthorized();
+
             if (!ModelState.IsValid)
             {
-                model.PatientList = _context.Users
-                    .Where(u => u.Role == "Patient")
-                    .Select(p => new SelectListItem
-                    {
-                        Value = p.Id.ToString(),
-                        Text = p.FirstName + " " + p.LastName
-                    }).ToList();
+                var patients = _context.Appointments
+                    .Where(a => a.DoctorId == doctorId)
+                    .Select(a => a.Patient)
+                    .Distinct()
+                    .ToList();
+
+                model.PatientList = patients.Select(p => new SelectListItem
+                {
+                    Value = p.Id.ToString(),
+                    Text = p.FirstName + " " + p.LastName
+                }).ToList();
 
                 return View(model);
             }
@@ -370,15 +410,21 @@ namespace PatientTrackingSite.Controllers
         [HttpGet]
         public IActionResult CreateDisease()
         {
+            int doctorId = HttpContext.Session.GetInt32("UserId") ?? 0;
+
+            var patients = _context.Appointments
+                .Where(a => a.DoctorId == doctorId)
+                .Select(a => a.Patient)
+                .Distinct()
+                .ToList();
+
             var model = new DiseaseCreateViewModel
             {
-                PatientList = _context.Users
-                    .Where(u => u.Role == "Patient")
-                    .Select(p => new SelectListItem
-                    {
-                        Value = p.Id.ToString(),
-                        Text = p.FirstName + " " + p.LastName
-                    }).ToList()
+                PatientList = patients.Select(p => new SelectListItem
+                {
+                    Value = p.Id.ToString(),
+                    Text = p.FirstName + " " + p.LastName
+                }).ToList()
             };
 
             return View(model);
@@ -387,16 +433,27 @@ namespace PatientTrackingSite.Controllers
         [HttpPost]
         public IActionResult CreateDisease(DiseaseCreateViewModel model)
         {
+            int doctorId = HttpContext.Session.GetInt32("UserId") ?? 0;
+
+            bool isValidPatient = _context.Appointments.Any(a =>
+                a.DoctorId == doctorId && a.PatientId == model.SelectedPatientId);
+
+            if (!isValidPatient)
+                return Unauthorized();
+
             if (!ModelState.IsValid)
             {
-                // View'e tekrar gösterilecekse listeyi yeniden doldur
-                model.PatientList = _context.Users
-                    .Where(u => u.Role == "Patient")
-                    .Select(p => new SelectListItem
-                    {
-                        Value = p.Id.ToString(),
-                        Text = p.FirstName + " " + p.LastName
-                    }).ToList();
+                var patients = _context.Appointments
+                    .Where(a => a.DoctorId == doctorId)
+                    .Select(a => a.Patient)
+                    .Distinct()
+                    .ToList();
+
+                model.PatientList = patients.Select(p => new SelectListItem
+                {
+                    Value = p.Id.ToString(),
+                    Text = p.FirstName + " " + p.LastName
+                }).ToList();
 
                 return View(model);
             }
@@ -419,8 +476,17 @@ namespace PatientTrackingSite.Controllers
         [HttpGet]
         public IActionResult EditDisease(int id)
         {
-            var disease = _context.Diseases.FirstOrDefault(d => d.Id == id);
-            if (disease == null) return NotFound();
+            int doctorId = HttpContext.Session.GetInt32("UserId") ?? 0;
+
+            var disease = _context.Diseases
+                .Include(d => d.Patient)
+                .FirstOrDefault(d => d.Id == id);
+
+            bool isValid = _context.Appointments.Any(a =>
+                a.DoctorId == doctorId && a.PatientId == disease.PatientId);
+
+            if (!isValid)
+                return Unauthorized();
 
             var model = new DiseaseCreateViewModel
             {
@@ -428,14 +494,14 @@ namespace PatientTrackingSite.Controllers
                 Name = disease.Name,
                 Description = disease.Description,
                 SelectedPatientId = disease.PatientId,
-                PatientList = _context.Users
-                    .Where(u => u.Role == "Patient")
-                    .Select(p => new SelectListItem
-                    {
-                        Value = p.Id.ToString(),
-                        Text = p.FirstName + " " + p.LastName
-                    })
-                    .ToList()
+                PatientList = new List<SelectListItem>
+{
+    new SelectListItem
+    {
+        Value = disease.PatientId.ToString(),
+        Text = disease.Patient.FirstName + " " + disease.Patient.LastName
+    }
+}
             };
 
             return View(model);
@@ -444,16 +510,27 @@ namespace PatientTrackingSite.Controllers
         [HttpPost]
         public IActionResult EditDisease(DiseaseCreateViewModel model)
         {
+            int doctorId = HttpContext.Session.GetInt32("UserId") ?? 0;
+
+            bool isValid = _context.Appointments.Any(a =>
+                a.DoctorId == doctorId && a.PatientId == model.SelectedPatientId);
+
+            if (!isValid)
+                return Unauthorized();
+
             if (!ModelState.IsValid)
             {
-                model.PatientList = _context.Users
-                    .Where(u => u.Role == "Patient")
-                    .Select(p => new SelectListItem
+                model.PatientList = new List<SelectListItem>
                     {
-                        Value = p.Id.ToString(),
-                        Text = p.FirstName + " " + p.LastName
-                    })
-                    .ToList();
+                        new SelectListItem
+                        {
+                            Value = model.SelectedPatientId.ToString(),
+                            Text = _context.Users
+                                .Where(u => u.Id == model.SelectedPatientId)
+                                .Select(u => u.FirstName + " " + u.LastName)
+                                .FirstOrDefault()
+                        }
+                    };
 
                 return View(model);
             }
@@ -463,14 +540,15 @@ namespace PatientTrackingSite.Controllers
 
             disease.Name = model.Name;
             disease.Description = model.Description;
-            disease.PatientId = model.SelectedPatientId;
 
             _context.SaveChanges();
 
             return RedirectToAction("PatientDetails", new { id = model.SelectedPatientId });
         }
 
+
         // SearchPatient  ------------------------------------------------------------------------------------------------
+
 
         [HttpGet]
         public IActionResult SearchPatient(string query)
@@ -478,13 +556,20 @@ namespace PatientTrackingSite.Controllers
             if (string.IsNullOrEmpty(query))
                 return RedirectToAction("Index");
 
-            var patient = _context.Users
-                .FirstOrDefault(p => (p.FirstName + " " + p.LastName).ToLower().Contains(query.ToLower()) && p.Role == "Patient");
+            int doctorId = HttpContext.Session.GetInt32("UserId") ?? 0;
+
+            // Sadece bu doktora ait hastalar içinde arama
+            var patient = _context.Appointments
+                .Where(a => a.DoctorId == doctorId)
+                .Select(a => a.Patient)
+                .Distinct()
+                .FirstOrDefault(p =>
+                    (p.FirstName + " " + p.LastName).ToLower().Contains(query.ToLower()));
 
             if (patient != null)
                 return RedirectToAction("PatientDetails", new { id = patient.Id });
 
-            TempData["SearchError"] = "Hasta bulunamadı.";
+            TempData["SearchError"] = "Patient not found.";
             return RedirectToAction("Index");
         }
 

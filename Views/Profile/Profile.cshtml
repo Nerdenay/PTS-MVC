@@ -63,7 +63,26 @@
 </style>
 
 <div class="form-section">
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+            <i class="fas fa-check-circle me-2"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+
     <form asp-action="Profile" method="post" enctype="multipart/form-data">
+
         <input type="hidden" asp-for="Id" />
 
         <div class="text-center mb-4">
@@ -82,7 +101,7 @@
             <span class="text-danger" asp-validation-for="ProfileImageFile"></span>
         </div>
 
-        <h4 class="text-center mb-4">Personal Information</h4>
+        <h4 class="text-center mb-4">Personel Info</h4>
 
         <div class="row g-4">
             <div class="col-md-6">
@@ -133,7 +152,7 @@
             </div>
         </div>
 
-        <h4 class="text-center mt-5 mb-4">Password Update</h4>
+        <h4 class="text-center mt-5 mb-4">Update Password</h4>
 
         <div class="row g-4">
             <div class="col-md-4">

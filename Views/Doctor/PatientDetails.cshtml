@@ -101,14 +101,15 @@ else
             {
                 <div class="card shadow-sm" style="width: 180px;">
                     <a href="@image.ImagePath" target="_blank">
-                        @if (image.ImagePath.EndsWith(".pdf"))
+                        @* @if (image.ImagePath.EndsWith(".pdf"))
                         {
                             <img src="~/images/png-icon.png" class="card-img-top p-3" style="height: 120px; object-fit: contain;" alt="PDF" />
                         }
                         else
                         {
                             <img src="@image.ImagePath" class="card-img-top" style="height: 120px; object-fit: cover;" alt="X-ray" />
-                        }
+                        } *@
+                        <file-icon path="@image.ImagePath" alt="Medical File"   />
                     </a>
 
                     <div class="card-body p-2">
