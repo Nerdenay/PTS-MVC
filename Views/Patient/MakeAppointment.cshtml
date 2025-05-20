@@ -8,6 +8,7 @@
 
 @section Styles {
     <style>
+
         .form-section {
             max-width: 600px;
             margin: auto;
@@ -21,19 +22,28 @@
             box-shadow: none;
             border-color: #0d6efd;
         }
+
+        .disabled-option {
+            color: #888; /* Gri renk */
+        }
+
     </style>
 }
 
 <h2 class="mb-4 text-center"><i class="fas fa-calendar-plus me-2"></i> Make an Appointment</h2>
 
 <div class="form-section">
+
+    <div asp-validation-summary="All" class="text-danger"></div>
+
     <form asp-action="MakeAppointment" method="post">
 
         <div class="mb-3">
 
             <label for="specialization" class="form-label">Select Specialization</label>
 
-            <select asp-for="Specialization" asp-items="ViewBag.Specializations" class="form-select">
+            <select asp-for="Specialization" asp-items="ViewBag.Specializations" class="form-select" id="specialization">
+
                 <option disabled selected value="">-- Choose a branch --</option>
             </select>
 
@@ -106,8 +116,14 @@
             $('#appointmentDate').change(function () {
                 var selectedDate = $(this).val();
                 var doctorId = $('#doctorDropdown').val();
+                 
+                // Log Controlu
+                console.log("Selected date:", selectedDate);
+                console.log("Selected doctorId:", doctorId);
 
-                if (selectedDate && doctorId) {
+                //  Boş değer kontrolü daha sağlam hale getir 
+
+                if (selectedDate && doctorId && doctorId !== "") {
                     $.get('/Patient/GetAvailableTimeSlots', {
                         doctorId: doctorId,
                         selectedDate: selectedDate
@@ -117,8 +133,20 @@
 
                         if (response.success && response.timeSlots.length > 0) {
                             timeSlotDropdown.append('<option disabled selected>-- Choose a time --</option>');
-                            $.each(response.timeSlots, function (i, time) {
-                                timeSlotDropdown.append('<option value="' + time + '">' + time + '</option>');
+
+                            $.each(response.timeSlots, function (i, slot) {
+                                var optionText = slot.time;
+                                var isDisabled = !slot.isAvailable;
+
+                                if (isDisabled) {
+                                    optionText += " (Full)";
+                                }
+
+                                timeSlotDropdown.append(
+                                    '<option value="' + slot.time + '" ' +
+                                    (isDisabled ? 'disabled class="disabled-option"' : '') +
+                                    '>' + optionText + '</option>'
+                                );
                             });
                         } else {
                             timeSlotDropdown.append('<option disabled>No available times</option>');
@@ -126,6 +154,9 @@
                     });
                 }
             });
+
         });
+
     </script>
+
 }

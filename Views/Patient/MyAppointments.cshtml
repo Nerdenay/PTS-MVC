@@ -1,0 +1,84 @@
+﻿@model List<PatientTrackingSite.Models.Appointment>
+
+@{
+    ViewData["Title"] = "My Appointments";
+    Layout = "_PatientLayout";
+}
+
+<h2 class="mb-4"><i class="fas fa-calendar-check me-2"></i> My Appointments</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">You don’t have any appointments yet.</div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Doctor</th>
+                <th>Status</th>
+                <th>Notes</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var appt in Model)
+            {
+                <tr>
+                    <td>@appt.AppointmentDate.ToString("dd MMM yyyy")</td>
+                    <td>@appt.AppointmentDate.ToString("HH:mm")</td>
+                    <td>@appt.Doctor.FirstName @appt.Doctor.LastName</td>
+                    <td>
+                       @*  @if (appt.Status == "Scheduled")
+                        {
+                            <span class="badge bg-warning text-dark">Pending</span>
+                        }
+                        else if (appt.Status == "Approved")
+                        {
+                            <span class="badge bg-success">Approved</span>
+                        }
+                        else if (appt.Status == "Rejected")
+                        {
+                            <span class="badge bg-danger">Rejected</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">@appt.Status</span>
+                        } *@
+
+                        <status-label status="@appt.Status"></status-label>
+
+                    </td>
+                    <td>@appt.Notes</td>
+
+                    <td>
+                        <form asp-action="DeleteAppointment" method="post" onsubmit="return confirm('Are you sure about deleting?');">
+                            <input type="hidden" name="id" value="@appt.Id" />
+                            <button type="submit" class="btn btn-sm btn-danger">
+                                <i class="fas fa-trash-alt"></i> Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

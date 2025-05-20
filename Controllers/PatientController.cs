@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using PatientTrackingSite.Models;
 using PatientTrackingSite.ViewModels;
 using PatientTrackingSite.Helpers;
+using System.Reflection.Metadata.Ecma335;
 
 namespace PatientTrackingSite.Controllers
 {
@@ -97,7 +98,9 @@ namespace PatientTrackingSite.Controllers
         }
 
 
+
         // Appointments -------------------------------------------------------------------------------------
+
 
         [HttpGet]
         public JsonResult GetAvailableTimeSlots(int doctorId, DateTime selectedDate)
@@ -114,12 +117,17 @@ namespace PatientTrackingSite.Controllers
                 .Select(a => a.AppointmentDate.TimeOfDay)
                 .ToList();
 
-            var availableSlots = allSlots.Except(takenSlots)
-                .Select(t => t.ToString(@"hh\:mm"))
-                .ToList();
+            var result = allSlots.Select(slot => new
+            {
+                time = slot.ToString(@"hh\:mm"),
+                isAvailable = !takenSlots.Contains(slot)
+            }).ToList();
 
-            return Json(new { success = true, timeSlots = availableSlots });
+            return Json(new { success = true, timeSlots = result });
         }
+
+
+
 
         [HttpGet]
         public JsonResult GetDoctorsBySpecialization(string specialization)
@@ -155,7 +163,7 @@ namespace PatientTrackingSite.Controllers
             return View();
         }
 
-     
+
 
         [HttpPost]
         public IActionResult MakeAppointment(AppointmentViewModel model)
@@ -172,6 +180,11 @@ namespace PatientTrackingSite.Controllers
                 return View(model);
             }
 
+            foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+            {
+                Console.WriteLine(error.ErrorMessage); // Visual Studio Output penceresinde görünür
+            }
+
             var patientId = HttpContext.Session.GetInt32("UserId");
             if (patientId == null)
                 return RedirectToAction("Login", "Account");
@@ -180,6 +193,69 @@ namespace PatientTrackingSite.Controllers
             var time = TimeSpan.Parse(model.TimeSlot); // "08:30" gibi
 
             var finalDateTime = model.AppointmentDate.Date + time;
+
+
+            var sameDayAppointmentCount = _context.Appointments.Count(a => // Aynı gün kaç randevu alınıyor
+                a.PatientId == patientId.Value &&
+                a.DoctorId == model.DoctorId &&
+                a.AppointmentDate.Date == model.AppointmentDate.Date);
+
+
+
+            if (sameDayAppointmentCount >= 1)
+            {
+                ModelState.AddModelError("", "You can take only 1 appointment on the same day.");
+
+                var specializations = _context.Users
+                    .Where(u => u.Role == "Doctor" && u.Specialization != null)
+                    .Select(u => u.Specialization)
+                    .Distinct()
+                    .ToList();
+
+                ViewBag.Specializations = new SelectList(specializations);
+                return View(model);
+            }
+
+
+
+            var totalAppointmentsThatDay = _context.Appointments.Count(a =>
+                a.AppointmentDate.Date == date);
+
+            if (totalAppointmentsThatDay >= 2)
+            {
+                ModelState.AddModelError("", "You have reached your hospital appointment limit for today. Please choose another day.");
+
+                var specializations = _context.Users
+                    .Where(u => u.Role == "Doctor" && u.Specialization != null)
+                    .Select(u => u.Specialization)
+                    .Distinct()
+                    .ToList();
+
+                ViewBag.Specializations = new SelectList(specializations);
+                return View(model);
+            }
+
+            // Eğer o saatte bu doktora ait bir randevu varsa, hata döndür
+
+            bool isSlotTaken = _context.Appointments.Any(a =>
+                a.DoctorId == model.DoctorId &&
+                a.AppointmentDate == finalDateTime);
+
+            if (isSlotTaken)
+            {
+                ModelState.AddModelError(string.Empty, "This time slot is already taken.");
+
+                // Dropdown'ların yeniden yüklenmesini sağla
+
+                var specializations = _context.Users
+                    .Where(u => u.Role == "Doctor" && u.Specialization != null)
+                    .Select(u => u.Specialization)
+                    .Distinct()
+                    .ToList();
+                ViewBag.Specializations = new SelectList(specializations);
+
+                return View(model);
+            }
 
 
             var appointment = new Appointment
@@ -194,7 +270,9 @@ namespace PatientTrackingSite.Controllers
             _context.Appointments.Add(appointment);
             _context.SaveChanges();
 
-            return RedirectToAction("Appointments", "Patient");
+            TempData["SuccessMessage"] = "Your appointment was done. Pending.";
+
+            return RedirectToAction("Index", "Patient");
         }
 
 
@@ -217,10 +295,52 @@ namespace PatientTrackingSite.Controllers
 
 
 
-        // My Appointments ---------------------------------------------------------------------------------
+        // My Appointments ---------------------------------------------------------------------------------------
 
 
+        public IActionResult MyAppointments()
 
+        {
+            // Giriş yapan hastanın ID'sini session'dan al
+            var patientId = HttpContext.Session.GetInt32("UserId");
+
+
+            if (patientId == null)
+                return RedirectToAction("Login", "Account");
+
+            var appointments = _context.Appointments
+                .Where(a => a.PatientId == patientId)
+                .Include(a => a.Doctor)
+                .OrderByDescending(a => a.AppointmentDate)
+                .ToList();
+
+            return View(appointments);
+
+        }
+
+
+        [HttpPost]
+        public IActionResult DeleteAppointment(int id)
+        {
+            var patientId = HttpContext.Session.GetInt32("UserId");
+            if (patientId == null)
+                return RedirectToAction("Login", "Account");
+
+            var appointment = _context.Appointments
+                .FirstOrDefault(a => a.Id == id && a.PatientId == patientId);
+
+            if (appointment == null)
+            {
+                TempData["ErrorMessage"] = "There is no appointment.";
+                return RedirectToAction("MyAppointments");
+            }
+
+            _context.Appointments.Remove(appointment);
+            _context.SaveChanges();
+
+            TempData["SuccessMessage"] = "Appointment Deleted.";
+            return RedirectToAction("MyAppointments");
+        }
 
 
     }

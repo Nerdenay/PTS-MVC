@@ -12,6 +12,7 @@ namespace PatientTrackingSite.ViewModels
         public int DoctorId { get; set; }
 
         [Required]
+        [DataType(DataType.Date)]
         public DateTime AppointmentDate { get; set; }
 
         public string Notes { get; set; }
