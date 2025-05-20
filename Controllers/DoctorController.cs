@@ -318,6 +318,7 @@ namespace PatientTrackingSite.Controllers
 
             _context.SaveChanges();
 
+            TempData["SuccessMessage"] = "Prescription updated successfully.";
             return RedirectToAction("PatientDetails", new { id = medication.PatientId });
         }
 
@@ -398,7 +399,11 @@ namespace PatientTrackingSite.Controllers
             return RedirectToAction("PatientDetails", new { id = model.SelectedPatientId });
         }
 
+
+
         // CreateDisease ------------------------------------------------------------------------------------------------
+
+
 
         [HttpGet]
         public IActionResult CreateDisease()
@@ -426,27 +431,30 @@ namespace PatientTrackingSite.Controllers
         [HttpPost]
         public IActionResult CreateDisease(DiseaseCreateViewModel model)
         {
-            var doctorId = HttpContext.Session.GetInt32("UserId");
+            Console.WriteLine(">>> POST CreateDisease çalıştı <<<");
 
-            if (doctorId == null || HttpContext.Session.GetString("UserRole") != "Doctor")
+            var doctorId = HttpContext.Session.GetInt32("UserId");
+            var role = HttpContext.Session.GetString("UserRole");
+
+            if (doctorId == null || role != "Doctor")
                 return RedirectToAction("Login", "Account");
 
-            // Yetkisiz hasta kontrolü
-            bool isValidPatient = _context.Appointments.Any(a =>
-                a.DoctorId == doctorId && a.PatientId == model.SelectedPatientId);
-
-            if (!isValidPatient)
-            {
-                ModelState.AddModelError(nameof(model.SelectedPatientId), "Please select a valid patient.");
-            }
+            ModelState.Remove("PatientList");
 
             if (!ModelState.IsValid)
             {
-                // PatientList'i yeniden doldur
-                var patients = _context.Appointments
-                    .Where(a => a.DoctorId == doctorId)
-                    .Select(a => a.Patient)
-                    .Distinct()
+                Console.WriteLine(">>> ModelState geçersiz <<<");
+                foreach (var item in ModelState)
+                {
+                    foreach (var error in item.Value.Errors)
+                    {
+                        Console.WriteLine($"Model hatası: {item.Key} - {error.ErrorMessage}");
+                    }
+                }
+
+                // PatientList'i tekrar doldur
+                var patients = _context.Users
+                    .Where(u => u.Role == "Patient")
                     .ToList();
 
                 model.PatientList = patients.Select(p => new SelectListItem
@@ -455,19 +463,28 @@ namespace PatientTrackingSite.Controllers
                     Text = p.FirstName + " " + p.LastName
                 }).ToList();
 
-                return View(model); 
+                return View(model);
             }
 
-            // Kayıt işlemi
             var disease = new Disease
             {
                 Name = model.Name,
                 Description = model.Description,
-                PatientId = model.SelectedPatientId.Value
+                PatientId = model.SelectedPatientId ?? 0
             };
 
-            _context.Diseases.Add(disease);
-            _context.SaveChanges();
+            try
+            {
+                _context.Diseases.Add(disease);
+                _context.SaveChanges();
+                Console.WriteLine(">>> Save işlemi başarılı <<<");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(">>> HATA: " + ex.Message);
+                TempData["ValidationError"] = "Error while saving: " + ex.Message;
+                return RedirectToAction("CreateDisease");
+            }
 
             return RedirectToAction("MyPatients");
         }
@@ -475,8 +492,8 @@ namespace PatientTrackingSite.Controllers
 
 
 
-
         // EditDisease ------------------------------------------------------------------------------------------------
+
 
         [HttpGet]
         public IActionResult EditDisease(int id)
@@ -500,22 +517,30 @@ namespace PatientTrackingSite.Controllers
                 Description = disease.Description,
                 SelectedPatientId = disease.PatientId,
                 PatientList = new List<SelectListItem>
-            {
-                new SelectListItem
-                {
-                    Value = disease.PatientId.ToString(),
-                    Text = disease.Patient.FirstName + " " + disease.Patient.LastName
-                }
-            }
-                        };
-
-                        return View(model);
+    {
+        new SelectListItem
+        {
+            Value = disease.PatientId.ToString(),
+            Text = disease.Patient.FirstName + " " + disease.Patient.LastName
         }
+    }
+            };
+
+            return View(model);
+        }
+
+
 
         [HttpPost]
         public IActionResult EditDisease(DiseaseCreateViewModel model)
         {
             int doctorId = HttpContext.Session.GetInt32("UserId") ?? 0;
+
+            // ❗ Model binding hatasını önle
+            ModelState.Remove("PatientList");
+
+            if (model.SelectedPatientId == null)
+                return BadRequest("Hasta seçimi boş.");
 
             bool isValid = _context.Appointments.Any(a =>
                 a.DoctorId == doctorId && a.PatientId == model.SelectedPatientId);
@@ -525,17 +550,18 @@ namespace PatientTrackingSite.Controllers
 
             if (!ModelState.IsValid)
             {
+                // Hasta listesi yeniden oluşturulmalı yoksa dropdown hata verir
                 model.PatientList = new List<SelectListItem>
+                {
+                    new SelectListItem
                     {
-                        new SelectListItem
-                        {
-                            Value = model.SelectedPatientId.ToString(),
-                            Text = _context.Users
-                                .Where(u => u.Id == model.SelectedPatientId)
-                                .Select(u => u.FirstName + " " + u.LastName)
-                                .FirstOrDefault()
-                        }
-                    };
+                        Value = model.SelectedPatientId.ToString(),
+                        Text = _context.Users
+                            .Where(u => u.Id == model.SelectedPatientId)
+                            .Select(u => u.FirstName + " " + u.LastName)
+                            .FirstOrDefault()
+                    }
+                };
 
                 return View(model);
             }
@@ -548,11 +574,13 @@ namespace PatientTrackingSite.Controllers
 
             _context.SaveChanges();
 
+            TempData["SuccessMessage"] = "Disease updated successfully.";
             return RedirectToAction("PatientDetails", new { id = model.SelectedPatientId });
         }
 
 
         // SearchPatient  ------------------------------------------------------------------------------------------------
+
 
 
         [HttpGet]

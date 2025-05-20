@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace PatientTrackingSite.ViewModels
 {
@@ -16,6 +18,7 @@ namespace PatientTrackingSite.ViewModels
         
         public string Description { get; set; }
 
+        [BindNever]
         public List<SelectListItem> PatientList { get; set; }
     }
 

@@ -7,6 +7,14 @@
 
 <h2 class="mb-4">@Model.Patient.FirstName @Model.Patient.LastName - Details</h2>
 
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
 <!-- Basic Information -->
 <div class="mb-4">
     <h5>Basic Information</h5>
