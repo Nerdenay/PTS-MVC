@@ -110,7 +110,7 @@ namespace PatientTrackingSite.Controllers
 
 
                 if (user.Role == "Patient")
-                    return RedirectToAction("Index", "PatientHome");
+                    return RedirectToAction("Index", "Patient");
                 else if (user.Role == "Doctor")
                     return RedirectToAction("Index", "Doctor");              
             }

@@ -1,5 +1,6 @@
 ﻿@model PatientTrackingSite.ViewModels.AppointmentViewModel
 
+
 @{
     ViewData["Title"] = "Make Appointment";
     Layout = "_PatientLayout";
@@ -27,16 +28,17 @@
 
 <div class="form-section">
     <form asp-action="MakeAppointment" method="post">
+
         <div class="mb-3">
+
             <label for="specialization" class="form-label">Select Specialization</label>
-            <select id="specialization" class="form-select" asp-for="Specialization">
+
+            <select asp-for="Specialization" asp-items="ViewBag.Specializations" class="form-select">
                 <option disabled selected value="">-- Choose a branch --</option>
-                @foreach (var branch in (SelectList)ViewBag.Specializations)
-                {
-                    <option value="@branch.Value">@branch.Text</option>
-                }
             </select>
+
             <span asp-validation-for="Specialization" class="text-danger"></span>
+
         </div>
 
         <div class="mb-3">
@@ -48,10 +50,21 @@
         </div>
 
         <div class="mb-3">
+
             <label asp-for="AppointmentDate" class="form-label">Select Date</label>
-            <input asp-for="AppointmentDate" type="datetime-local" class="form-control" />
+            <input asp-for="AppointmentDate" type="date" class="form-control" id="appointmentDate" />
             <span asp-validation-for="AppointmentDate" class="text-danger"></span>
+
         </div>
+
+        <div class="mb-3">
+            <label for="timeSlot" class="form-label">Select Time</label>
+            <select asp-for="TimeSlot" id="timeSlot" class="form-select">
+                <option disabled selected value="">-- Choose a time --</option>
+            </select>
+            <span asp-validation-for="TimeSlot" class="text-danger"></span>
+        </div>
+
 
         <div class="mb-3">
             <label asp-for="Notes" class="form-label">Note (Optional)</label>
@@ -62,7 +75,9 @@
     </form>
 </div>
 
+
 @section Scripts {
+
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
 
     <script>
@@ -79,6 +94,35 @@
                         $.each(data, function (i, doctor) {
                             doctorDropdown.append('<option value="' + doctor.id + '">' + doctor.fullName + '</option>');
                         });
+                    });
+                }
+            });
+
+            $('#doctorDropdown').change(function () {
+                $('#appointmentDate').val('');
+                $('#timeSlot').empty().append('<option disabled selected>-- Choose a time --</option>');
+            });
+
+            $('#appointmentDate').change(function () {
+                var selectedDate = $(this).val();
+                var doctorId = $('#doctorDropdown').val();
+
+                if (selectedDate && doctorId) {
+                    $.get('/Patient/GetAvailableTimeSlots', {
+                        doctorId: doctorId,
+                        selectedDate: selectedDate
+                    }, function (response) {
+                        var timeSlotDropdown = $('#timeSlot');
+                        timeSlotDropdown.empty();
+
+                        if (response.success && response.timeSlots.length > 0) {
+                            timeSlotDropdown.append('<option disabled selected>-- Choose a time --</option>');
+                            $.each(response.timeSlots, function (i, time) {
+                                timeSlotDropdown.append('<option value="' + time + '">' + time + '</option>');
+                            });
+                        } else {
+                            timeSlotDropdown.append('<option disabled>No available times</option>');
+                        }
                     });
                 }
             });
