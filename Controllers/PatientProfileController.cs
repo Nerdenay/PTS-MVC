@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using PatientTrackingSite.Models;
 using PatientTrackingSite.ViewModels;
+using Microsoft.AspNetCore.Identity;
 
 namespace PatientTrackingSite.Controllers
 {
@@ -87,18 +88,21 @@ namespace PatientTrackingSite.Controllers
                 user.ProfileImagePath = "/uploads/" + fileName;
             }
 
-            // Handle password update
+            // Handle password update with hashing
             if (!string.IsNullOrWhiteSpace(model.CurrentPassword) &&
                 !string.IsNullOrWhiteSpace(model.NewPassword) &&
                 !string.IsNullOrWhiteSpace(model.ConfirmPassword))
             {
-                if (user.PasswordHash != model.CurrentPassword) // NOTE: Hash comparison önerilir
+                var hasher = new PasswordHasher<User>();
+                var result = hasher.VerifyHashedPassword(user, user.PasswordHash, model.CurrentPassword);
+
+                if (result == PasswordVerificationResult.Failed)
                 {
                     ModelState.AddModelError("CurrentPassword", "Incorrect current password.");
                     return View(model);
                 }
 
-                user.PasswordHash = model.NewPassword; // NOTE: Hashlemen önerilir!
+                user.PasswordHash = hasher.HashPassword(user, model.NewPassword);
             }
 
             _context.Users.Update(user);

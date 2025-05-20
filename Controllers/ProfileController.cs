@@ -2,6 +2,7 @@
 using PatientTrackingSite.Models;
 using Microsoft.EntityFrameworkCore;
 using PatientTrackingSite.ViewModels;
+using Microsoft.AspNetCore.Identity;
 
 namespace PatientTrackingSite.Controllers
 {
@@ -38,7 +39,6 @@ namespace PatientTrackingSite.Controllers
                 TCNo = user.TCNo,
                 ProfileImagePath = user.ProfileImagePath,
                 Specialization = user.Specialization
-
             };
 
             return View(model);
@@ -49,7 +49,6 @@ namespace PatientTrackingSite.Controllers
         {
             ModelState.Remove("ProfileImagePath");
             ModelState.Remove("ProfileImageFile");
-
 
             if (string.IsNullOrWhiteSpace(model.CurrentPassword) &&
                 string.IsNullOrWhiteSpace(model.NewPassword) &&
@@ -74,7 +73,6 @@ namespace PatientTrackingSite.Controllers
             user.TCNo = model.TCNo;
             user.Specialization = model.Specialization;
 
-
             // Profil resmi
             if (model.ProfileImageFile != null && model.ProfileImageFile.Length > 0)
             {
@@ -91,34 +89,31 @@ namespace PatientTrackingSite.Controllers
 
                 user.ProfileImagePath = "/uploads/" + fileName;
             }
-            else
-            {
-                Console.WriteLine("Yeni fotoğraf seçilmedi, mevcut fotoğraf korunuyor.");
-            }
 
-
-            // Şifre güncelle
+            // Şifre güncelleme (hash ile)
             if (!string.IsNullOrWhiteSpace(model.CurrentPassword) &&
                 !string.IsNullOrWhiteSpace(model.NewPassword) &&
                 !string.IsNullOrWhiteSpace(model.ConfirmPassword))
             {
-                if (user.PasswordHash != model.CurrentPassword) // NOT: hash kontrolü eklenmeli
+                var hasher = new PasswordHasher<User>();
+
+                // Mevcut şifreyi doğrula
+                var result = hasher.VerifyHashedPassword(user, user.PasswordHash, model.CurrentPassword);
+                if (result != PasswordVerificationResult.Success)
                 {
                     ModelState.AddModelError("CurrentPassword", "Incorrect current password.");
                     return View(model);
                 }
 
-                user.PasswordHash = model.NewPassword;
+                // Yeni şifreyi hashle
+                user.PasswordHash = hasher.HashPassword(user, model.NewPassword);
             }
 
             _context.Users.Update(user);
-
             await _context.SaveChangesAsync();
 
             TempData["Success"] = "Profile updated successfully.";
             return RedirectToAction("Profile");
         }
     }
-
 }
-
