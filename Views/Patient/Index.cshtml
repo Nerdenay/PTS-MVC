@@ -3,6 +3,85 @@
     ViewData["Title"] = "Dashboard";
     Layout = "~/Views/Shared/_PatientLayout.cshtml";
     var fullName = Context.Session.GetString("UserName") + " " + Context.Session.GetString("UserLastName");
+    var today = DateTime.Now.ToString("dddd, dd MMMM yyyy");
+
 }
 
-<h2 class="mb-4">Welcome, @fullName !</h2> 
+
+@section Styles {
+    <style>
+        .dashboard-card {
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            background: #fff;
+            padding: 24px;
+            transition: transform 0.3s ease;
+        }
+
+            .dashboard-card:hover {
+                transform: translateY(-4px);
+            }
+
+        .welcome-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .map-container iframe {
+            width: 100%;
+            height: 300px;
+            border: none;
+            border-radius: 10px;
+        }
+
+        .dark-mode .dashboard-card {
+            background-color: #1e1e1e;
+            color: #fff;
+        }
+
+        .dark-mode .map-container iframe {
+            filter: grayscale(1) brightness(0.8);
+        }
+
+        .dark-mode .dashboard-card {
+            background-color: #1e1e1e;
+            color: #fff;
+        }
+
+
+    </style>
+}
+
+<div class="row g-4">
+
+    <div class="col-12 col-lg-8">
+
+        <div class="dashboard-card">
+
+            <div class="welcome-title mb-2"> Welcome, @fullName !</div>
+
+            <p class="mb-1">Today's date: <strong>@today</strong></p>
+
+            <div class="dashboard-card mt-4">
+                <h5><i class="fas fa-lightbulb me-2 text-warning"></i> Health Tip</h5>
+                <p class="mb-0">@ViewBag.HealthTip</p>
+            </div>
+
+            <p class="text-muted">You can view your appointments, medications, and test results from the menu.</p>
+
+            <a href="/Patient/MakeAppointment" class="btn btn-primary mt-3">
+                <i class="fas fa-calendar-plus me-1"></i> Book a New Appointment
+            </a>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+        <div class="dashboard-card map-container">
+            <h5><i class="fas fa-hospital me-2"></i> Our Hospital Location</h5>
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3068.9879648192133!2d32.854084115364236!3d39.92077539250898!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14d34f3147e75555%3A0xf3286b1f16f89093!2sHacettepe%20University%20Hospital!5e0!3m2!1str!2str!4v1700000000000"
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+        </div>
+    </div>
+</div>

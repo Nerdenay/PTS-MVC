@@ -15,5 +15,10 @@ namespace PatientTrackingSite.ViewModels
         public DateTime AppointmentDate { get; set; }
 
         public string Notes { get; set; }
+
+
+        [Required(ErrorMessage = "Please select a time slot.")]
+
+        public string TimeSlot { get; set; }  // "08:00", "08:30" gibi
     }
 }

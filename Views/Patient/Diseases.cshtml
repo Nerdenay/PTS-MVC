@@ -1,0 +1,71 @@
+﻿@model List<PatientTrackingSite.Models.Disease>
+
+@{
+    ViewData["Title"] = "My Diseases";
+    Layout = "_PatientLayout";
+}
+
+@section Styles {
+    <style>
+        .disease-card {
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 20px;
+            background-color: #ffffff;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+            .disease-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            }
+
+        .disease-icon {
+            font-size: 2rem;
+            color: #dc3545;
+        }
+
+        .disease-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .disease-description {
+            font-size: 0.95rem;
+            color: #555;
+        }
+    </style>
+}
+
+<h2 class="mb-4"><i class="fas fa-notes-medical me-2"></i> My Diagnosed Diseases</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info text-center">No diseases recorded yet.</div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach (var disease in Model)
+        {
+            <div class="col">
+                <div class="disease-card h-100">
+                    <div class="d-flex align-items-start mb-3">
+                        <i class="fas fa-virus disease-icon me-3"></i>
+                        <div>
+                            <div class="disease-name">@disease.Name</div>
+                            @if (!string.IsNullOrEmpty(disease.Description))
+                            {
+                                <div class="disease-description">@disease.Description</div>
+                            }
+                            else
+                            {
+                                <div class="text-muted small">No description provided.</div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
