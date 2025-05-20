@@ -7,7 +7,7 @@ namespace PatientTrackingSite.ViewModels
     public class PrescriptionViewModel
     {
         [Required]
-        public int SelectedPatientId { get; set; }
+        public int? SelectedPatientId { get; set; }
 
         [BindNever]
         public List<SelectListItem> PatientList { get; set; } = new();

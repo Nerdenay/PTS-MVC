@@ -7,6 +7,13 @@
 
 <h2 class="mb-4">Upload Test Result</h2>
 
+@if (TempData["ValidationError"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ValidationError"]
+    </div>
+}
+
 <form asp-action="UploadMedicalFile" method="post" enctype="multipart/form-data" class="bg-white p-4 shadow rounded">
     <div class="mb-3">
         <label asp-for="SelectedPatientId" class="form-label">Patient</label>

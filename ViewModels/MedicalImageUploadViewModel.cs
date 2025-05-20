@@ -6,8 +6,8 @@ namespace PatientTrackingSite.ViewModels
     public class MedicalImageUploadViewModel
     {
 
-        [Required(ErrorMessage = "Patient selection is required.")]
-        public int SelectedPatientId { get; set; }
+        [Required(ErrorMessage = "Please select a patient.")]
+        public int? SelectedPatientId { get; set; }
 
         [Required(ErrorMessage = "You must select a file.")]
         public IFormFile File { get; set; }

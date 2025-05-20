@@ -7,6 +7,14 @@
 
 <h2 class="mb-4">Write Prescription</h2>
 
+@if (TempData["ValidationError"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ValidationError"]
+    </div>
+}
+
+
 <form asp-action="CreatePrescription" method="post" class="bg-white p-4 shadow rounded">
     <div class="mb-3">
         <label asp-for="SelectedPatientId" class="form-label">Patient</label>

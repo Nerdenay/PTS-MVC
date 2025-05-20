@@ -7,16 +7,17 @@ namespace PatientTrackingSite.ViewModels
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Patient selection is required.")]
-        public int SelectedPatientId { get; set; }
+        [Required(ErrorMessage = "Please select a patient.")]
+        public int? SelectedPatientId { get; set; }
 
-        [Required(ErrorMessage = "Disease name is required.")]
+        [Required(ErrorMessage = "Please enter a disease name.")]
         public string Name { get; set; }
 
-        [Required(ErrorMessage = "Description is required.")]
+        
         public string Description { get; set; }
 
-
-        public List<SelectListItem>? PatientList { get; set; }
+        public List<SelectListItem> PatientList { get; set; }
     }
+
+
 }

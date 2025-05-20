@@ -217,6 +217,7 @@ namespace PatientTrackingSite.Controllers
             return View(model);
         }
 
+
         [HttpPost]
         public IActionResult CreatePrescription(PrescriptionViewModel model)
         {
@@ -225,36 +226,30 @@ namespace PatientTrackingSite.Controllers
             if (doctorId == null || HttpContext.Session.GetString("UserRole") != "Doctor")
                 return RedirectToAction("Login", "Account");
 
-            //Yetkisiz hasta kontrolü
+            // Hasta yetkilendirmesi
             bool isValidPatient = _context.Appointments.Any(a =>
                 a.DoctorId == doctorId && a.PatientId == model.SelectedPatientId);
 
             if (!isValidPatient)
-                return Unauthorized();
-
-            if (!ModelState.IsValid)
             {
-                var patients = _context.Appointments
-                    .Where(a => a.DoctorId == doctorId)
-                    .Select(a => a.Patient)
-                    .Distinct()
-                    .ToList();
-
-                model.PatientList = patients.Select(p => new SelectListItem
-                {
-                    Value = p.Id.ToString(),
-                    Text = p.FirstName + " " + p.LastName
-                }).ToList();
-
-                return View(model);
+                TempData["ValidationError"] = "Please select a valid patient.";
+                return RedirectToAction("CreatePrescription");
             }
 
+            // ModelState hatalıysa
+            if (!ModelState.IsValid)
+            {
+                TempData["ValidationError"] = "Please fill in all required fields.";
+                return RedirectToAction("CreatePrescription");
+            }
+
+            // Kayıt işlemi
             var medication = new Medication
             {
                 Name = model.MedicationName,
                 Dosage = model.Dosage,
                 Instructions = model.Instructions,
-                PatientId = model.SelectedPatientId,
+                PatientId = model.SelectedPatientId.Value,
                 DoctorId = doctorId.Value
             };
 
@@ -263,6 +258,7 @@ namespace PatientTrackingSite.Controllers
 
             return RedirectToAction("MyPatients");
         }
+
 
         // Edit Prescription  ------------------------------------------------------------------------------------------------
 
@@ -351,34 +347,30 @@ namespace PatientTrackingSite.Controllers
             return View(model);
         }
 
+
         [HttpPost]
         public async Task<IActionResult> UploadMedicalFile(MedicalImageUploadViewModel model)
         {
             int doctorId = HttpContext.Session.GetInt32("UserId") ?? 0;
 
+            // Hasta kontrolü
             bool isValidPatient = _context.Appointments.Any(a =>
                 a.DoctorId == doctorId && a.PatientId == model.SelectedPatientId);
 
             if (!isValidPatient)
-                return Unauthorized();
-
-            if (!ModelState.IsValid)
             {
-                var patients = _context.Appointments
-                    .Where(a => a.DoctorId == doctorId)
-                    .Select(a => a.Patient)
-                    .Distinct()
-                    .ToList();
-
-                model.PatientList = patients.Select(p => new SelectListItem
-                {
-                    Value = p.Id.ToString(),
-                    Text = p.FirstName + " " + p.LastName
-                }).ToList();
-
-                return View(model);
+                TempData["ValidationError"] = "Please select a valid patient.";
+                return RedirectToAction("UploadMedicalFile");
             }
 
+            // ModelState kontrolü (zorunlu alanlar eksikse)
+            if (!ModelState.IsValid)
+            {
+                TempData["ValidationError"] = "Please fill in all required fields and upload a valid file.";
+                return RedirectToAction("UploadMedicalFile");
+            }
+
+            // Klasör ve dosya kaydı
             var uploadsFolder = Path.Combine(_env.WebRootPath, "medical-files");
             if (!Directory.Exists(uploadsFolder))
                 Directory.CreateDirectory(uploadsFolder);
@@ -391,9 +383,10 @@ namespace PatientTrackingSite.Controllers
                 await model.File.CopyToAsync(stream);
             }
 
+            // Veritabanı kaydı
             var medicalImage = new MedicalImage
             {
-                PatientId = model.SelectedPatientId,
+                PatientId = model.SelectedPatientId.Value,
                 ImagePath = "/medical-files/" + uniqueName,
                 Description = model.Description,
                 UploadedAt = DateTime.Now
@@ -412,13 +405,11 @@ namespace PatientTrackingSite.Controllers
         {
             int doctorId = HttpContext.Session.GetInt32("UserId") ?? 0;
 
-
             var patients = _context.Appointments
                 .Where(a => a.DoctorId == doctorId)
                 .Select(a => a.Patient)
                 .Distinct()
                 .ToList();
-
 
             var model = new DiseaseCreateViewModel
             {
@@ -435,17 +426,23 @@ namespace PatientTrackingSite.Controllers
         [HttpPost]
         public IActionResult CreateDisease(DiseaseCreateViewModel model)
         {
-            int doctorId = HttpContext.Session.GetInt32("UserId") ?? 0;
+            var doctorId = HttpContext.Session.GetInt32("UserId");
 
+            if (doctorId == null || HttpContext.Session.GetString("UserRole") != "Doctor")
+                return RedirectToAction("Login", "Account");
+
+            // Yetkisiz hasta kontrolü
             bool isValidPatient = _context.Appointments.Any(a =>
                 a.DoctorId == doctorId && a.PatientId == model.SelectedPatientId);
 
             if (!isValidPatient)
-                return Unauthorized();
+            {
+                ModelState.AddModelError(nameof(model.SelectedPatientId), "Please select a valid patient.");
+            }
 
             if (!ModelState.IsValid)
             {
-                // PatientList yeniden doldurulmalı
+                // PatientList'i yeniden doldur
                 var patients = _context.Appointments
                     .Where(a => a.DoctorId == doctorId)
                     .Select(a => a.Patient)
@@ -458,21 +455,26 @@ namespace PatientTrackingSite.Controllers
                     Text = p.FirstName + " " + p.LastName
                 }).ToList();
 
-                return View(model);
+                return View(model); 
             }
 
+            // Kayıt işlemi
             var disease = new Disease
             {
                 Name = model.Name,
                 Description = model.Description,
-                PatientId = model.SelectedPatientId
+                PatientId = model.SelectedPatientId.Value
             };
 
             _context.Diseases.Add(disease);
             _context.SaveChanges();
 
-            return RedirectToAction("PatientDetails", new { id = model.SelectedPatientId });
+            return RedirectToAction("MyPatients");
         }
+
+
+
+
 
         // EditDisease ------------------------------------------------------------------------------------------------
 
@@ -498,16 +500,16 @@ namespace PatientTrackingSite.Controllers
                 Description = disease.Description,
                 SelectedPatientId = disease.PatientId,
                 PatientList = new List<SelectListItem>
-{
-    new SelectListItem
-    {
-        Value = disease.PatientId.ToString(),
-        Text = disease.Patient.FirstName + " " + disease.Patient.LastName
-    }
-}
-            };
+            {
+                new SelectListItem
+                {
+                    Value = disease.PatientId.ToString(),
+                    Text = disease.Patient.FirstName + " " + disease.Patient.LastName
+                }
+            }
+                        };
 
-            return View(model);
+                        return View(model);
         }
 
         [HttpPost]
