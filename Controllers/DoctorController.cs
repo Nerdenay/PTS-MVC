@@ -6,7 +6,6 @@ using PatientTrackingSite.ViewModels;
 using Microsoft.AspNetCore.Hosting;
 using System;
 using Microsoft.Extensions.Hosting;
-using Microsoft.AspNetCore.Mvc.Rendering;
 
 
 namespace PatientTrackingSite.Controllers
