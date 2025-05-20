@@ -412,11 +412,13 @@ namespace PatientTrackingSite.Controllers
         {
             int doctorId = HttpContext.Session.GetInt32("UserId") ?? 0;
 
+
             var patients = _context.Appointments
                 .Where(a => a.DoctorId == doctorId)
                 .Select(a => a.Patient)
                 .Distinct()
                 .ToList();
+
 
             var model = new DiseaseCreateViewModel
             {
@@ -443,6 +445,7 @@ namespace PatientTrackingSite.Controllers
 
             if (!ModelState.IsValid)
             {
+                // PatientList yeniden doldurulmalı
                 var patients = _context.Appointments
                     .Where(a => a.DoctorId == doctorId)
                     .Select(a => a.Patient)

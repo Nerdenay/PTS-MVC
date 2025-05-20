@@ -12,7 +12,7 @@ namespace PatientTrackingSite.ViewModels
         [Required(ErrorMessage = "You must select a file.")]
         public IFormFile File { get; set; }
 
-        [Required(ErrorMessage = "Description is required.")]
+        
         public string Description { get; set; }
 
         public List<SelectListItem> PatientList { get; set; } = new List<SelectListItem>();
