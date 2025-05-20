@@ -86,13 +86,14 @@
         <input type="hidden" asp-for="Id" />
 
         <div class="text-center mb-4">
+
             @if (!string.IsNullOrEmpty(Model.ProfileImagePath))
             {
                 <img src="@Model.ProfileImagePath" class="profile-img mb-2" alt="Profile Image" />
             }
             else
             {
-                <img src="~/images/default-profile.png" class="profile-img mb-2" alt="Profile Image" />
+                <img src="~/images/doctors/default.jpg" class="profile-img mb-2" alt="Profile Image" />
             }
 
             <div class="d-flex justify-content-center" style="max-width: 300px; margin:auto;">

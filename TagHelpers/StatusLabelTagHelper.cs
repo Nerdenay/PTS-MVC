@@ -10,8 +10,8 @@ namespace PatientTrackingSite.TagHelpers
         {
             var cssClass = Status switch
             {
-                "Scheduled" => "badge bg-warning text-dark",
-                "Completed" => "badge bg-success",
+                "Pending" => "badge bg-warning text-dark",
+                "Approved" => "badge bg-success",
                 "Cancelled" => "badge bg-danger",
                 _ => "badge bg-secondary"
             };
