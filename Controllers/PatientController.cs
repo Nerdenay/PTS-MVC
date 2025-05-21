@@ -74,7 +74,8 @@ namespace PatientTrackingSite.Controllers
                 .Where(m => m.PatientId == patientId)
                 .Include(m => m.Doctor)  // Reçeteyi yazan doktor bilgisi
                 .ToList();
-            // Ayrıca doktor reçeteyi oluştururken DoctorId değerini de veritabanına kaydediyor olman gerekir. !!!
+
+          
 
             return View(medications);
         }
@@ -150,7 +151,7 @@ namespace PatientTrackingSite.Controllers
         [HttpGet]
         public IActionResult MakeAppointment()
         {
-            // Tüm doktorlardan branşları al ve tekilleştir
+        
 
             var specializations = _context.Users
                 .Where(u => u.Role == "Doctor" && u.Specialization != null)
@@ -182,7 +183,7 @@ namespace PatientTrackingSite.Controllers
 
             foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
             {
-                Console.WriteLine(error.ErrorMessage); // Visual Studio Output penceresinde görünür
+                Console.WriteLine(error.ErrorMessage); 
             }
 
             var patientId = HttpContext.Session.GetInt32("UserId");
@@ -191,19 +192,19 @@ namespace PatientTrackingSite.Controllers
                 return RedirectToAction("Login", "Account");
 
             var date = model.AppointmentDate.Date;
-            var time = TimeSpan.Parse(model.TimeSlot); // "08:30" gibi
+            var time = TimeSpan.Parse(model.TimeSlot); 
 
             var finalDateTime = model.AppointmentDate.Date + time;
 
 
-            var sameDayAppointmentCount = _context.Appointments.Count(a => // Aynı gün kaç randevu alınıyor
+            var sameDayAppointmentCount = _context.Appointments.Count(a => 
                 a.PatientId == patientId.Value &&
                 a.DoctorId == model.DoctorId &&
                 a.AppointmentDate.Date == model.AppointmentDate.Date);
 
 
 
-            if (sameDayAppointmentCount >= 1)
+            if (sameDayAppointmentCount >= 1)  // aynı doktordan aynı gün 1 randevu almasını sağladım burda da
             {
                 ModelState.AddModelError("", "You can take only 1 appointment on the same day.");
 
@@ -225,7 +226,7 @@ namespace PatientTrackingSite.Controllers
                  a.PatientId == patientId && a.AppointmentDate.Date == date);
 
 
-            if (totalAppointmentsThatDay >= 2)
+            if (totalAppointmentsThatDay >= 2) // Burda amaç hasta aynı gün hastaneden 2 randevu alabilir aynı branş başka hocalar olablr ona validation yapadım
             {
                 ModelState.AddModelError("", "You have reached your daily appointment limit. Please choose another day.");
 

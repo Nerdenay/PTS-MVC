@@ -37,6 +37,7 @@ namespace PatientTrackingSite.Controllers
             var thisMonth = new DateTime(today.Year, today.Month, 1);
 
             // Doktorun hastaları
+
             var patientIds = _context.Appointments
                 .Where(a => a.DoctorId == doctorId)
                 .Select(a => a.PatientId)
@@ -227,6 +228,7 @@ namespace PatientTrackingSite.Controllers
                 return RedirectToAction("Login", "Account");
 
             // Hasta yetkilendirmesi
+
             bool isValidPatient = _context.Appointments.Any(a =>
                 a.DoctorId == doctorId && a.PatientId == model.SelectedPatientId);
 
@@ -237,6 +239,7 @@ namespace PatientTrackingSite.Controllers
             }
 
             // ModelState hatalıysa
+
             if (!ModelState.IsValid)
             {
                 TempData["ValidationError"] = "Please fill in all required fields.";
@@ -365,6 +368,7 @@ namespace PatientTrackingSite.Controllers
             }
 
             // ModelState kontrolü (zorunlu alanlar eksikse)
+
             if (!ModelState.IsValid)
             {
                 TempData["ValidationError"] = "Please fill in all required fields and upload a valid file.";
@@ -536,7 +540,7 @@ namespace PatientTrackingSite.Controllers
         {
             int doctorId = HttpContext.Session.GetInt32("UserId") ?? 0;
 
-            // ❗ Model binding hatasını önle
+            
             ModelState.Remove("PatientList");
 
             if (model.SelectedPatientId == null)
@@ -550,7 +554,7 @@ namespace PatientTrackingSite.Controllers
 
             if (!ModelState.IsValid)
             {
-                // Hasta listesi yeniden oluşturulmalı yoksa dropdown hata verir
+                
                 model.PatientList = new List<SelectListItem>
                 {
                     new SelectListItem
@@ -591,7 +595,8 @@ namespace PatientTrackingSite.Controllers
 
             int doctorId = HttpContext.Session.GetInt32("UserId") ?? 0;
 
-            // Sadece bu doktora ait hastalar içinde arama
+            // Sadece bu doktora ait hastalar içinde arama yapacaz
+
             var patient = _context.Appointments
                 .Where(a => a.DoctorId == doctorId)
                 .Select(a => a.Patient)

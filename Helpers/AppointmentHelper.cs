@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace PatientTrackingSite.Helpers
+namespace PatientTrackingSite.Helpers   // Öğle arası var 1 saat diğer türlü 8 - 5 arası çalışıyorlar 30 dk ara ile randevu alıyoz
 {
     public class AppointmentHelper
     {

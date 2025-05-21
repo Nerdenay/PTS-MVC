@@ -65,7 +65,7 @@ namespace PatientTrackingSite.Controllers
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == model.Id && u.Role == "Patient");
             if (user == null) return NotFound();
 
-            // Update basic fields
+         
             user.FirstName = model.FirstName;
             user.LastName = model.LastName;
             user.Phone = model.Phone;
@@ -73,7 +73,7 @@ namespace PatientTrackingSite.Controllers
             user.Address = model.Address;
             user.TCNo = model.TCNo;
 
-            // Handle profile image upload
+            
             if (model.ProfileImageFile != null && model.ProfileImageFile.Length > 0)
             {
                 var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads");
@@ -88,7 +88,9 @@ namespace PatientTrackingSite.Controllers
                 user.ProfileImagePath = "/uploads/" + fileName;
             }
 
-            // Handle password update with hashing
+            // Handle password update with hashing  // byrda hashleme kontrolu ve yapma 
+
+
             if (!string.IsNullOrWhiteSpace(model.CurrentPassword) &&
                 !string.IsNullOrWhiteSpace(model.NewPassword) &&
                 !string.IsNullOrWhiteSpace(model.ConfirmPassword))

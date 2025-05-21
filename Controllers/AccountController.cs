@@ -131,7 +131,7 @@ namespace PatientTrackingSite.Controllers
             var hasher = new PasswordHasher<User>();
             var dummyUser = new User();
             var hashedPassword = hasher.HashPassword(dummyUser, plainPassword);
-            return Content(hashedPassword); // Ekrana yazdır , şifre hashlenmiş hali veriyor ve dbe koyuyor
+            return Content(hashedPassword); // Ekrana yazdırınca , şifre hashlenmiş hali veriyor ve dbe koyuyor , şifreyi burdan öğren öyle db gircez
         }
 
     }
