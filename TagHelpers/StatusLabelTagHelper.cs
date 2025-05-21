@@ -19,6 +19,7 @@ namespace PatientTrackingSite.TagHelpers
             output.TagName = "span";
             output.Attributes.SetAttribute("class", cssClass);
             output.Content.SetContent(Status);
+
         }
     }
 }

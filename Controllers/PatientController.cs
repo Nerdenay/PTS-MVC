@@ -186,6 +186,7 @@ namespace PatientTrackingSite.Controllers
             }
 
             var patientId = HttpContext.Session.GetInt32("UserId");
+
             if (patientId == null)
                 return RedirectToAction("Login", "Account");
 
@@ -218,12 +219,15 @@ namespace PatientTrackingSite.Controllers
 
 
 
+
+
             var totalAppointmentsThatDay = _context.Appointments.Count(a =>
-                a.AppointmentDate.Date == date);
+                 a.PatientId == patientId && a.AppointmentDate.Date == date);
+
 
             if (totalAppointmentsThatDay >= 2)
             {
-                ModelState.AddModelError("", "You have reached your hospital appointment limit for today. Please choose another day.");
+                ModelState.AddModelError("", "You have reached your daily appointment limit. Please choose another day.");
 
                 var specializations = _context.Users
                     .Where(u => u.Role == "Doctor" && u.Specialization != null)
