@@ -28,6 +28,32 @@ A web-based hospital management system where patients can register, log in, view
 
 ## 📷 Screenshots
 
+### 🔐 Login Page
+![Login Screenshot](wwwroot/Screenshots/Login.png)
+
+### 👨‍⚕️ Doctor List
+![Doctor List](wwwroot/Screenshots/Doctors.png)
+
+### 📅 Doctor Homepage
+![Homepage](wwwroot/Screenshots/HomepageD.png)
+
+### 📅 Patient Homepage
+![Homepage](wwwroot/Screenshots/HomepageP.png)
+
+### 📅 List the Patient
+![Homepage](wwwroot/Screenshots/Patient.png)
+
+
+👤 Developers
+-Nebi Erdenay Çubukçu 
+-Mehmet Tat
+
+
+
+
+
+
+
 
 
 
