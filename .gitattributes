@@ -1,3 +1,14 @@
-* text=auto
-*.html linguist-detectable=false
-*.css linguist-detectable=false
+# Razor dosyalarını C# olarak say
+*.cshtml linguist-language=C#
+
+# Statikleri ve saf HTML/JS'yi dilden sayma
+wwwroot/** linguist-detectable=false
+public/**  linguist-detectable=false
+dist/**    linguist-detectable=false
+*.html     linguist-detectable=false
+*.js       linguist-detectable=false
+*.css      linguist-detectable=false
+
+# (İstersen) Paket ve vendor içeriğini de hariç tut
+node_modules/** linguist-vendored
+vendor/**       linguist-vendored
